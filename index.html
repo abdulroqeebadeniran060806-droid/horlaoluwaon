@@ -1,0 +1,2483 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HORLA OLUWA MULTIPURPOSE INVESTMENT LIMITED</title>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700;900&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script>
+  // JSONBin Configuration
+  const JSONBIN_KEY = "$2a$10$Bs.TNwbdDKDQ962x3bool.uscAD7terQflW/QFdO3Z64yEh99Gx3C";
+  const JSONBIN_URL = "https://api.jsonbin.io/v3/b";
+  let BIN_ID = localStorage.getItem("horla_bin_id") || null;
+
+  // Create or load bin
+  async function initDatabase() {
+    if (BIN_ID) return;
+
+    try {
+      const response = await fetch(JSONBIN_URL, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "X-Master-Key": JSONBIN_KEY,
+          "X-Bin-Name": "horlaoluwa-applicants",
+          "X-Bin-Private": "true"
+        },
+        body: JSON.stringify({ applicants: [] })
+      });
+
+      const data = await response.json();
+      BIN_ID = data.metadata.id;
+      localStorage.setItem("horla_bin_id", BIN_ID);
+      console.log("✅ Database created! BIN ID:", BIN_ID);
+    } catch (error) {
+      console.log("Database error:", error);
+    }
+  }
+
+  // Get all applicants from database
+  async function getApplicants() {
+    if (!BIN_ID) await initDatabase();
+    try {
+      const response = await fetch(`${JSONBIN_URL}/${BIN_ID}/latest`, {
+        headers: { "X-Master-Key": JSONBIN_KEY }
+      });
+      const data = await response.json();
+      return data.record.applicants || [];
+    } catch (error) {
+      console.log("Get error:", error);
+      return [];
+    }
+  }
+
+  // Save applicant to database
+  async function saveApplicant(applicant) {
+    if (!BIN_ID) await initDatabase();
+    try {
+      const applicants = await getApplicants();
+      applicants.push(applicant);
+      await fetch(`${JSONBIN_URL}/${BIN_ID}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          "X-Master-Key": JSONBIN_KEY
+        },
+        body: JSON.stringify({ applicants })
+      });
+      console.log("✅ Applicant saved to database!");
+      return true;
+    } catch (error) {
+      console.log("Save error:", error);
+      return false;
+    }
+  }
+
+  // Update applicant in database
+  async function updateApplicant(appID, updates) {
+    try {
+      const applicants = await getApplicants();
+      const index = applicants.findIndex(a => a.id === appID);
+      if (index !== -1) {
+        applicants[index] = { ...applicants[index], ...updates };
+        await fetch(`${JSONBIN_URL}/${BIN_ID}`, {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+            "X-Master-Key": JSONBIN_KEY
+          },
+          body: JSON.stringify({ applicants })
+        });
+        return true;
+      }
+      return false;
+    } catch (error) {
+      console.log("Update error:", error);
+      return false;
+    }
+  }
+
+  // Initialize database on page load
+  window.addEventListener("load", initDatabase);
+</script>
+   <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+
+<script>
+  emailjs.init("W-D9so51pRhS0VJuD");
+</script>
+  </head>
+<style>
+
+  /* ===== RESET ===== */
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+
+  /* ===== BODY ===== */
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background-color: #FAF6EF;
+    background-image: repeating-linear-gradient(
+      45deg,
+      transparent,
+      transparent 20px,
+      rgba(201, 146, 42, 0.05) 20px,
+      rgba(201, 146, 42, 0.05) 21px
+    );
+    color: #0B1F3A;
+  }
+
+  /* ===== NAVIGATION ===== */
+  nav {
+    background: #0B1F3A;
+    padding: 1rem 3rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+nav .logo {
+  color: #E8B84B;
+  font-size: 1.2rem;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+nav .logo img {
+  width: 45px;
+  height: 45px;
+  border-radius: 8px;
+  object-fit: cover;
+}
+
+  nav ul {
+    list-style: none;
+    display: flex;
+    gap: 2rem;
+  }
+
+  nav ul a {
+    color: white;
+    text-decoration: none;
+    font-size: 0.9rem;
+  }
+
+  nav ul a:hover {
+    color: #E8B84B;
+  }
+
+  /* ===== HERO ===== */
+  #hero {
+    background: #0B1F3A;
+    color: white;
+    padding: 6rem 3rem;
+    text-align: center;
+  }
+
+  #hero h1 {
+  font-size: 3rem;
+  color: #E8B84B;
+  margin-bottom: 1rem;
+  font-family: 'Playfair Display', serif;
+}
+
+  #hero p {
+    font-size: 1.1rem;
+    color: rgba(255,255,255,0.7);
+    margin-bottom: 2rem;
+    max-width: 600px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  #hero a {
+    display: inline-block;
+    margin: 0.5rem;
+    padding: 0.8rem 2rem;
+    border-radius: 8px;
+    text-decoration: none;
+    font-weight: bold;
+  }
+
+  #hero a:first-of-type {
+    background: #C9922A;
+    color: #0B1F3A;
+  }
+
+  #hero a:last-of-type {
+    border: 1px solid white;
+    color: white;
+  }
+
+  /* ===== COURSES ===== */
+  #courses {
+    padding: 4rem 3rem;
+    text-align: center;
+  }
+
+  #courses h2 {
+    font-size: 2rem;
+    margin-bottom: 2rem;
+    color: #0B1F3A;
+  }
+
+  .course-card {
+    display: inline-block;
+    background: white;
+    border-radius: 12px;
+    padding: 2rem;
+    margin: 1rem;
+    width: 250px;
+    vertical-align: top;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+    text-align: left;
+  }
+
+  .course-card h3 {
+    font-size: 1.1rem;
+    color: #0B1F3A;
+    margin-bottom: 0.75rem;
+  }
+
+  .course-card p {
+    font-size: 0.85rem;
+    color: #6B7280;
+    margin-bottom: 0.5rem;
+    line-height: 1.6;
+  }
+
+  .course-card a {
+    display: inline-block;
+    margin-top: 1rem;
+    padding: 0.5rem 1.25rem;
+    background: #0B1F3A;
+    color: white;
+    border-radius: 6px;
+    text-decoration: none;
+    font-size: 0.85rem;
+    font-weight: bold;
+  }
+
+  .course-card a:hover {
+    background: #C9922A;
+    color: #0B1F3A;
+  }
+
+  #courses h2 {
+  font-size: 2rem;
+  margin-bottom: 2rem;
+  color: #0B1F3A;
+  font-family: 'Playfair Display', serif;
+}
+
+#why h2 {
+  color: #E8B84B;
+  font-size: 2rem;
+  margin-bottom: 2rem;
+  font-family: 'Playfair Display', serif;
+}
+
+  /* ===== WHY CHOOSE US ===== */
+  #why {
+    background: #0B1F3A;
+    padding: 4rem 3rem;
+    text-align: center;
+  }
+
+    #why h2 {
+    color: #E8B84B;
+    font-size: 2rem;
+    margin-bottom: 2rem;
+  }
+
+
+
+  .why-card {
+    display: inline-block;
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(201,146,42,0.2);
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin: 0.75rem;
+    width: 220px;
+    vertical-align: top;
+    text-align: left;
+  }
+
+  .why-card h4 {
+    color: white;
+    font-size: 1rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .why-card p {
+    color: rgba(255,255,255,0.5);
+    font-size: 0.85rem;
+    line-height: 1.6;
+  }
+
+  /* ===== FORM ===== */
+  #apply {
+    padding: 4rem 3rem;
+    text-align: center;
+  }
+
+  #apply h2 {
+    font-size: 2rem;
+    margin-bottom: 2rem;
+    color: #0B1F3A;
+  }
+
+  #apply form {
+    display: inline-block;
+    background: white;
+    padding: 2.5rem;
+    border-radius: 16px;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.08);
+    text-align: left;
+    width: 100%;
+    max-width: 550px;
+  }
+
+  #apply input,
+  #apply select,
+  #apply textarea {
+    width: 100%;
+    padding: 0.8rem 1rem;
+    margin-bottom: 1rem;
+    border: 1.5px solid rgba(0,0,0,0.1);
+    border-radius: 8px;
+    font-size: 0.9rem;
+    font-family: Arial, sans-serif;
+    background: #FAF6EF;
+    outline: none;
+  }
+
+  #apply input:focus,
+  #apply select:focus,
+  #apply textarea:focus {
+    border-color: #C9922A;
+  }
+
+  #apply textarea {
+    height: 100px;
+    resize: vertical;
+  }
+
+  #apply button {
+    width: 100%;
+    padding: 1rem;
+    background: #C9922A;
+    color: #0B1F3A;
+    border: none;
+    border-radius: 10px;
+    font-size: 1rem;
+    font-weight: bold;
+    cursor: pointer;
+  }
+
+  #apply button:hover {
+    background: #E8B84B;
+  }
+
+   
+
+  /* ===== FOOTER ===== */
+  footer {
+    background: #1A1A2E;
+    color: rgba(255,255,255,0.4);
+    text-align: center;
+    padding: 2rem;
+    font-size: 0.85rem;
+    line-height: 2;
+  }
+
+/* ===== MOBILE FRIENDLY ===== */
+@media (max-width: 768px) {
+
+  /* Navigation */
+  nav {
+    flex-direction: column;
+    gap: 1rem;
+    padding: 1rem;
+    text-align: center;
+  }
+
+  nav ul {
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  /* Hero */
+  #hero {
+    padding: 4rem 1.5rem;
+  }
+
+  #hero h1 {
+    font-size: 2rem;
+  }
+
+  #hero a {
+    display: block;
+    margin: 0.5rem auto;
+    max-width: 250px;
+  }
+
+  /* Courses */
+  #courses {
+    padding: 3rem 1.5rem;
+  }
+
+  .course-card {
+    display: block;
+    width: 100%;
+    margin: 0.75rem 0;
+  }
+
+  /* Why Choose Us */
+  #why {
+    padding: 3rem 1.5rem;
+  }
+
+  .why-card {
+    display: block;
+    width: 100%;
+    margin: 0.75rem 0;
+  }
+
+  /* Form */
+  #apply {
+    padding: 3rem 1.5rem;
+  }
+
+  #apply form {
+    padding: 1.5rem;
+  }
+
+  /* Footer */
+  footer {
+    padding: 1.5rem;
+    font-size: 0.8rem;
+  }
+
+}
+
+  /* ===== DIAGONAL STRIPES BACKGROUND ===== */
+  body {
+    background-color: #FAF6EF;
+    background-image: repeating-linear-gradient(
+      45deg,
+      transparent,
+      transparent 20px,
+      rgba(201, 146, 42, 0.04) 20px,
+      rgba(201, 146, 42, 0.04) 21px
+    );
+  }
+
+  #hero {
+    background: #0B1F3A;
+    background-image: repeating-linear-gradient(
+      45deg,
+      transparent,
+      transparent 30px,
+      rgba(255,255,255,0.02) 30px,
+      rgba(255,255,255,0.02) 31px
+    );
+  }
+
+  #why {
+    background: #0B1F3A;
+    background-image: repeating-linear-gradient(
+      -45deg,
+      transparent,
+      transparent 30px,
+      rgba(201, 146, 42, 0.04) 30px,
+      rgba(201, 146, 42, 0.04) 31px
+    );
+  }
+
+  #lookup {
+    background: #0B1F3A;
+    background-image: repeating-linear-gradient(
+      45deg,
+      transparent,
+      transparent 30px,
+      rgba(201, 146, 42, 0.04) 30px,
+      rgba(201, 146, 42, 0.04) 31px
+    );
+  }
+
+</style>
+<body>
+<!--NAVIGATION BAR-->
+<nav>
+    <div class="logo"> <img src="In-print Horla Oluwa.jpg" alt="HORLA OLUWA LOGO"/>
+      HORLA OLUWA </div>
+    <ul>
+        <li> <a href="#courses"> Courses</a> </li>
+        <li> <a href="#why"> About</a> </li>
+        <li> <a href="#apply"> Apply</a> </li>
+        <li> <a href="#lookup"> Check Status</a> </li>
+        <li> <a href="applicant portal.html"> Applicant Portal</a> </li>
+    </ul>
+</nav>
+<!--HERO SECTION-->
+<section id="hero">
+    <h1>Build Your Digital Future Today!</h1>
+    <p>HORLA OLUWA Multipurpose Investment Limited delivers world class computer education for professionals and enterprises</p>
+    <a href="#apply"> Apply Now</a>
+    <a href="#courses"> View Courses</a>
+</section>
+<!--COURSE SECTION-->
+<section id="courses">
+
+
+
+
+</section>
+
+<!--COURSE SECTION-->
+<section id="courses" style="padding:4rem 3rem; background:#FAF6EF;">
+  
+  <div style="max-width:800px; margin:0 auto;">
+    
+    <p style="color:#C9922A; font-size:0.8rem; font-weight:bold; letter-spacing:0.12em; text-transform:uppercase; margin-bottom:0.5rem;">
+      Our Programs
+    </p>
+    <h2 style="font-family:'Playfair Display',serif; color:#0B1F3A; font-size:2rem; margin-bottom:0.5rem;">
+      Courses Designed for Real-World Success
+    </h2>
+    <p style="color:#6B7280; font-size:0.9rem; margin-bottom:2.5rem;">
+      Choose a program that fits your goals and schedule
+    </p>
+
+    <!-- Course 1 -->
+    <div style="
+      background:white;
+      border-radius:16px;
+      padding:1.5rem 2rem;
+      margin-bottom:1rem;
+      box-shadow:0 4px 20px rgba(0,0,0,0.06);
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      flex-wrap:wrap;
+      gap:1rem;
+      border-left:4px solid #C9922A;
+    ">
+      <div style="flex:1; min-width:200px;">
+        <div style="display:flex; align-items:center; gap:0.75rem; margin-bottom:0.5rem;">
+          <span style="font-size:1.5rem;">🖥️</span>
+          <h3 style="font-family:'Playfair Display',serif; font-size:1.1rem; color:#0B1F3A;">
+            Basic Computer Skills
+          </h3>
+        </div>
+        <p style="color:#6B7280; font-size:0.85rem; line-height:1.6; margin-bottom:0.75rem;">
+          Master the fundamentals — typing, file management, internet browsing. Also good for JAMB candidates!
+        </p>
+        <div style="display:flex; gap:0.75rem; flex-wrap:wrap;">
+          <span style="background:#FAF6EF; color:#C9922A; padding:0.3rem 0.75rem; border-radius:100px; font-size:0.75rem; font-weight:bold;">4 Weeks+</span>
+          <span style="background:#FAF6EF; color:#6B7280; padding:0.3rem 0.75rem; border-radius:100px; font-size:0.75rem;">Beginner</span>
+          <span style="background:#FAF6EF; color:#6B7280; padding:0.3rem 0.75rem; border-radius:100px; font-size:0.75rem;">Certificate</span>
+        </div>
+      </div>
+      <div style="text-align:right; min-width:140px;">
+        <div style="font-family:'Playfair Display',serif; font-size:1.4rem; font-weight:700; color:#0B1F3A;">
+          ₦30,000
+        </div>
+        <a href="#apply" style="
+          display:inline-block;
+          margin-top:0.75rem;
+          padding:0.5rem 1.25rem;
+          background:#0B1F3A;
+          color:white;
+          border-radius:6px;
+          text-decoration:none;
+          font-size:0.85rem;
+          font-weight:bold;
+        ">Enroll →</a>
+      </div>
+    </div>
+
+    <!-- Course 2 -->
+    <div style="
+      background:white;
+      border-radius:16px;
+      padding:1.5rem 2rem;
+      margin-bottom:1rem;
+      box-shadow:0 4px 20px rgba(0,0,0,0.06);
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      flex-wrap:wrap;
+      gap:1rem;
+      border-left:4px solid #E8B84B;
+    ">
+      <div style="flex:1; min-width:200px;">
+        <div style="display:flex; align-items:center; gap:0.75rem; margin-bottom:0.5rem;">
+          <span style="font-size:1.5rem;">📊</span>
+          <h3 style="font-family:'Playfair Display',serif; font-size:1.1rem; color:#0B1F3A;">
+            Microsoft Office Suite Package Only
+          </h3>
+        </div>
+        <p style="color:#6B7280; font-size:0.85rem; line-height:1.6; margin-bottom:0.75rem;">
+          Master Word, Excel, PowerPoint and Outlook. Essential for any professional environment.
+        </p>
+        <div style="display:flex; gap:0.75rem; flex-wrap:wrap;">
+          <span style="background:#FAF6EF; color:#C9922A; padding:0.3rem 0.75rem; border-radius:100px; font-size:0.75rem; font-weight:bold;">6 Weeks+</span>
+          <span style="background:#FAF6EF; color:#6B7280; padding:0.3rem 0.75rem; border-radius:100px; font-size:0.75rem;">Intermediate</span>
+          <span style="background:#FAF6EF; color:#6B7280; padding:0.3rem 0.75rem; border-radius:100px; font-size:0.75rem;">Certificate</span>
+        </div>
+      </div>
+      <div style="text-align:right; min-width:140px;">
+        <div style="font-family:'Playfair Display',serif; font-size:1.4rem; font-weight:700; color:#0B1F3A;">
+          ₦40,000
+        </div>
+        <a href="#apply" style="
+          display:inline-block;
+          margin-top:0.75rem;
+          padding:0.5rem 1.25rem;
+          background:#0B1F3A;
+          color:white;
+          border-radius:6px;
+          text-decoration:none;
+          font-size:0.85rem;
+          font-weight:bold;
+        ">Enroll →</a>
+      </div>
+    </div>
+
+    <!-- Course 3 -->
+    <div style="
+      background:white;
+      border-radius:16px;
+      padding:1.5rem 2rem;
+      margin-bottom:1rem;
+      box-shadow:0 4px 20px rgba(0,0,0,0.06);
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      flex-wrap:wrap;
+      gap:1rem;
+      border-left:4px solid #0B1F3A;
+    ">
+      <div style="flex:1; min-width:200px;">
+        <div style="display:flex; align-items:center; gap:0.75rem; margin-bottom:0.5rem;">
+          <span style="font-size:1.5rem;">🏆</span>
+          <h3 style="font-family:'Playfair Display',serif; font-size:1.1rem; color:#0B1F3A;">
+            Basic & Microsoft Office Suite Package
+          </h3>
+        </div>
+        <p style="color:#6B7280; font-size:0.85rem; line-height:1.6; margin-bottom:0.75rem;">
+          Master from the beginning — Basic, Word, Excel, PowerPoint and Outlook combined.
+        </p>
+        <div style="display:flex; gap:0.75rem; flex-wrap:wrap;">
+          <span style="background:#FAF6EF; color:#C9922A; padding:0.3rem 0.75rem; border-radius:100px; font-size:0.75rem; font-weight:bold;">10 Weeks+</span>
+          <span style="background:#FAF6EF; color:#6B7280; padding:0.3rem 0.75rem; border-radius:100px; font-size:0.75rem;">Professional</span>
+          <span style="background:#FAF6EF; color:#6B7280; padding:0.3rem 0.75rem; border-radius:100px; font-size:0.75rem;">Certificate</span>
+        </div>
+      </div>
+      <div style="text-align:right; min-width:140px;">
+        <div style="font-family:'Playfair Display',serif; font-size:1.4rem; font-weight:700; color:#0B1F3A;">
+          ₦70,000
+        </div>
+        <a href="#apply" style="
+          display:inline-block;
+          margin-top:0.75rem;
+          padding:0.5rem 1.25rem;
+          background:#0B1F3A;
+          color:white;
+          border-radius:6px;
+          text-decoration:none;
+          font-size:0.85rem;
+          font-weight:bold;
+        ">Enroll →</a>
+      </div>
+    </div>
+
+    <!-- Course 4 -->
+    <div style="
+      background:white;
+      border-radius:16px;
+      padding:1.5rem 2rem;
+      margin-bottom:1rem;
+      box-shadow:0 4px 20px rgba(0,0,0,0.06);
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      flex-wrap:wrap;
+      gap:1rem;
+      border-left:4px solid #C9922A;
+    ">
+      <div style="flex:1; min-width:200px;">
+        <div style="display:flex; align-items:center; gap:0.75rem; margin-bottom:0.5rem;">
+          <span style="font-size:1.5rem;">💻</span>
+          <h3 style="font-family:'Playfair Display',serif; font-size:1.1rem; color:#0B1F3A;">
+            Programming & Coding
+          </h3>
+        </div>
+        <p style="color:#6B7280; font-size:0.85rem; line-height:1.6; margin-bottom:0.75rem;">
+          Learn HTML, CSS and JavaScript. Build real websites from scratch.
+        </p>
+        <div style="display:flex; gap:0.75rem; flex-wrap:wrap;">
+          <span style="background:#FAF6EF; color:#C9922A; padding:0.3rem 0.75rem; border-radius:100px; font-size:0.75rem; font-weight:bold;">15 Weeks+</span>
+          <span style="background:#FAF6EF; color:#6B7280; padding:0.3rem 0.75rem; border-radius:100px; font-size:0.75rem;">All Levels</span>
+          <span style="background:#FAF6EF; color:#6B7280; padding:0.3rem 0.75rem; border-radius:100px; font-size:0.75rem;">Certificate</span>
+        </div>
+      </div>
+      <div style="text-align:right; min-width:140px;">
+        <div style="font-family:'Playfair Display',serif; font-size:1.4rem; font-weight:700; color:#0B1F3A;">
+          ₦100,000
+        </div>
+        <a href="#apply" style="
+          display:inline-block;
+          margin-top:0.75rem;
+          padding:0.5rem 1.25rem;
+          background:#0B1F3A;
+          color:white;
+          border-radius:6px;
+          text-decoration:none;
+          font-size:0.85rem;
+          font-weight:bold;
+        ">Enroll →</a>
+      </div>
+    </div>
+
+    <!-- Course 5 -->
+    <div style="
+      background:white;
+      border-radius:16px;
+      padding:1.5rem 2rem;
+      margin-bottom:1rem;
+      box-shadow:0 4px 20px rgba(0,0,0,0.06);
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      flex-wrap:wrap;
+      gap:1rem;
+      border-left:4px solid #E8B84B;
+    ">
+      <div style="flex:1; min-width:200px;">
+        <div style="display:flex; align-items:center; gap:0.75rem; margin-bottom:0.5rem;">
+          <span style="font-size:1.5rem;">🌐</span>
+          <h3 style="font-family:'Playfair Display',serif; font-size:1.1rem; color:#0B1F3A;">
+            Digital Literacy & Internet
+          </h3>
+        </div>
+        <p style="color:#6B7280; font-size:0.85rem; line-height:1.6; margin-bottom:0.75rem;">
+          Basic online practices — online payment, online application, email and more.
+        </p>
+        <div style="display:flex; gap:0.75rem; flex-wrap:wrap;">
+          <span style="background:#FAF6EF; color:#C9922A; padding:0.3rem 0.75rem; border-radius:100px; font-size:0.75rem; font-weight:bold;">3 Weeks+</span>
+          <span style="background:#FAF6EF; color:#6B7280; padding:0.3rem 0.75rem; border-radius:100px; font-size:0.75rem;">Beginner</span>
+          <span style="background:#FAF6EF; color:#6B7280; padding:0.3rem 0.75rem; border-radius:100px; font-size:0.75rem;">Certificate</span>
+        </div>
+      </div>
+      <div style="text-align:right; min-width:140px;">
+        <div style="font-family:'Playfair Display',serif; font-size:1.4rem; font-weight:700; color:#0B1F3A;">
+          ₦15,000
+        </div>
+        <a href="#apply" style="
+          display:inline-block;
+          margin-top:0.75rem;
+          padding:0.5rem 1.25rem;
+          background:#0B1F3A;
+          color:white;
+          border-radius:6px;
+          text-decoration:none;
+          font-size:0.85rem;
+          font-weight:bold;
+        ">Enroll →</a>
+      </div>
+    </div>
+
+    <!-- Course 6 — Full Package -->
+    <div style="
+      background: linear-gradient(135deg, #0B1F3A, #1a3a5c);
+      border-radius:16px;
+      padding:1.5rem 2rem;
+      margin-bottom:1rem;
+      box-shadow:0 4px 20px rgba(11,31,58,0.2);
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      flex-wrap:wrap;
+      gap:1rem;
+      border-left:4px solid #E8B84B;
+      position:relative;
+      overflow:hidden;
+    ">
+      <!-- Best Value Badge -->
+      <div style="
+        position:absolute;
+        top:1rem;
+        right:1rem;
+        background:#E8B84B;
+        color:#0B1F3A;
+        padding:0.3rem 0.75rem;
+        border-radius:100px;
+        font-size:0.7rem;
+        font-weight:bold;
+        letter-spacing:0.05em;
+      ">⭐ BEST VALUE</div>
+
+      <div style="flex:1; min-width:200px;">
+        <div style="display:flex; align-items:center; gap:0.75rem; margin-bottom:0.5rem;">
+          <span style="font-size:1.5rem;">🎓</span>
+          <h3 style="font-family:'Playfair Display',serif; font-size:1.1rem; color:#E8B84B;">
+            Full Package — From Basic to Master
+          </h3>
+        </div>
+        <p style="color:rgba(255,255,255,0.65); font-size:0.85rem; line-height:1.6; margin-bottom:0.75rem;">
+          Everything included — Basic, Microsoft Office, Programming and Digital Literacy all in one.
+        </p>
+        <div style="display:flex; gap:0.75rem; flex-wrap:wrap;">
+          <span style="background:rgba(255,255,255,0.1); color:#E8B84B; padding:0.3rem 0.75rem; border-radius:100px; font-size:0.75rem; font-weight:bold;">15 Weeks+</span>
+          <span style="background:rgba(255,255,255,0.1); color:rgba(255,255,255,0.7); padding:0.3rem 0.75rem; border-radius:100px; font-size:0.75rem;">Master</span>
+          <span style="background:rgba(255,255,255,0.1); color:rgba(255,255,255,0.7); padding:0.3rem 0.75rem; border-radius:100px; font-size:0.75rem;">Certificate</span>
+        </div>
+      </div>
+      <div style="text-align:right; min-width:140px;">
+        <div style="font-family:'Playfair Display',serif; font-size:1.4rem; font-weight:700; color:#E8B84B;">
+          ₦150,000
+        </div>
+        <a href="#apply" style="
+          display:inline-block;
+          margin-top:0.75rem;
+          padding:0.5rem 1.25rem;
+          background:linear-gradient(135deg, #C9922A, #E8B84B);
+          color:#0B1F3A;
+          border-radius:6px;
+          text-decoration:none;
+          font-size:0.85rem;
+          font-weight:bold;
+        ">Enroll →</a>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!--WHY CHOOSE US-->
+<section id="why">
+    <h3>Why Choose Us</h3>
+    <div class="why-card">
+        <h4>Certified Instructor</h4>
+        <p>All Instructors hold recognized industry certifications</p>
+    </div>
+
+    <div class="why-card">
+      <h4>Accredited Certificates</h4>
+      <p>Receive globally recognized certificates upon course completion.</p>
+    </div>
+
+    
+    <div class="why-card">
+      <h4>Flexible Scheduling</h4>
+      <p>Morning, afternoon and weekend classes available.</p>
+    </div>
+
+    <div class="why-card">
+      <h4>Career Support</h4>
+      <p>CV writing, job placement and interview preparation included.</p>
+    </div>
+</section>
+
+<!--APPLICATION FORM-->
+<section id="apply">
+    <h2>Apply Now</h2>
+
+    <!-- Progress Bar -->
+<div style="margin-bottom:2rem;">
+  <div style="display:flex; justify-content:space-between; margin-bottom:0.5rem;">
+    <span id="progress-label" style="font-size:0.8rem; font-weight:bold; color:#0B1F3A;">Step 1 of 3 — Personal Details</span>
+    <span id="progress-percent" style="font-size:0.8rem; color:#C9922A; font-weight:bold;">33%</span>
+  </div>
+  <div style="background:#FAF6EF; border-radius:100px; height:8px; overflow:hidden; border:1px solid rgba(0,0,0,0.08);">
+    <div id="progress-bar" style="
+      height:100%;
+      width:33%;
+      background:linear-gradient(135deg, #C9922A, #E8B84B);
+      border-radius:100px;
+      transition: width 0.4s ease;
+    "></div>
+  </div>
+  <!-- Step dots -->
+  <div style="display:flex; justify-content:space-between; margin-top:0.75rem;">
+    <div style="text-align:center;">
+      <div id="dot-1" style="width:28px; height:28px; border-radius:50%; background:#C9922A; color:white; display:flex; align-items:center; justify-content:center; font-size:0.75rem; font-weight:bold; margin:0 auto;">1</div>
+      <p style="font-size:0.7rem; color:#C9922A; margin-top:0.3rem; font-weight:bold;">Personal</p>
+    </div>
+    <div style="text-align:center;">
+      <div id="dot-2" style="width:28px; height:28px; border-radius:50%; background:#e5e7eb; color:#9ca3af; display:flex; align-items:center; justify-content:center; font-size:0.75rem; font-weight:bold; margin:0 auto;">2</div>
+      <p style="font-size:0.7rem; color:#9ca3af; margin-top:0.3rem;">Course</p>
+    </div>
+    <div style="text-align:center;">
+      <div id="dot-3" style="width:28px; height:28px; border-radius:50%; background:#e5e7eb; color:#9ca3af; display:flex; align-items:center; justify-content:center; font-size:0.75rem; font-weight:bold; margin:0 auto;">3</div>
+      <p style="font-size:0.7rem; color:#9ca3af; margin-top:0.3rem;">Security</p>
+    </div>
+  </div>
+</div>
+    
+<form id="apply-form" onsubmit="handleSubmit(event)">
+    <input type="text" id="firstName" placeholder="First Name">
+    <input type="text" id="lastName" placeholder="Last Name">
+    <input type="tel" id="phone" placeholder="Phone Number">
+    <input type="date" id="dob">
+    <label style="display:block; font-size:0.8rem; font-weight:bold; margin-bottom:0.5rem;">Passport Photograph</label>
+    <input type="file" id="passport" accept="image/*" onchange="showPassportName(this)" style="width:100%; padding:0.8rem; border:1.5px dashed #C9922A; border-radius:8px; background:#FAF6EF; margin-bottom:0.5rem; cursor:pointer;"/>
+    <p id="passport-status" style="font-size:0.8rem; color:#C9922A; margin-bottom:1rem;"></p>
+    <input 
+  type="email" 
+  id="email" 
+  placeholder="Gmail Address (e.g. you@gmail.com)"
+  oninput="validateGmail(this)"
+/>
+<p id="gmail-status" style="font-size:0.75rem; margin-top:-0.75rem; margin-bottom:0.5rem;"></p>
+
+<button 
+  type="button"
+  onclick="sendVerificationCode()"
+  id="send-code-btn"
+  style="
+    width:100%;
+    padding:0.7rem;
+    background:#0B1F3A;
+    color:white;
+    border:none;
+    border-radius:8px;
+    font-size:0.85rem;
+    font-weight:bold;
+    cursor:pointer;
+    margin-bottom:1rem;
+  ">
+  📧 Send Verification Code
+</button>
+
+<div id="code-input-section" style="display:none;">
+  <input 
+    type="text" 
+    id="verification-code" 
+    placeholder="Enter 6-digit code from your Gmail"
+    maxlength="6"
+    style="
+      width:100%;
+      padding:0.8rem 1rem;
+      margin-bottom:0.5rem;
+      border:1.5px solid rgba(0,0,0,0.1);
+      border-radius:8px;
+      font-size:0.9rem;
+      background:#FAF6EF;
+      outline:none;
+      letter-spacing:0.2em;
+      text-align:center;
+    "
+  />
+  <button
+    type="button"
+    onclick="verifyCode()"
+    style="
+      width:100%;
+      padding:0.7rem;
+      background:#28a745;
+      color:white;
+      border:none;
+      border-radius:8px;
+      font-size:0.85rem;
+      font-weight:bold;
+      cursor:pointer;
+      margin-bottom:1rem;
+    ">
+    ✅ Verify Code
+  </button>
+  <p id="verify-status" style="font-size:0.75rem; margin-bottom:1rem; text-align:center;"></p>
+</div>
+
+    
+    <select id="course">
+        <option> Select Course </option>
+        <option> Basic Computer Skills</option>
+        <option> Microsoft Office Suite Package Only</option>
+        <option> Both the Basic & Microsoft Office Suite Package</option>
+        <option> Programming & Coding</option>
+        <option> Digital Literacy & Internet</option>
+        <option> Full Package for all</option>
+    </select>
+
+    <input 
+  type="password" 
+  id="portal-password" 
+  placeholder="Create a Portal Password"
+/>
+<p style="font-size:0.75rem; color:#6B7280; margin-bottom:1rem;">
+  ⚠️ Remember this password — you'll need it to access your student portal
+</p>
+
+<input 
+  type="password" 
+  id="portal-password-confirm" 
+  placeholder="Confirm Portal Password"
+/>
+
+    <select id="schedule">
+        <option> Preferred Class Schedule </option> 
+        <option> Morning Class (9am - 12pm) </option>
+        <option> Afternoon Class (1pm - 4pm) </option>
+        <option> Evening Class (Good for students!) (5pm - 7pm)</option>
+        <option> Weekend Class (Saturday & Sunday) (9am - 7pm)</option>
+        <option> Available all days </option>
+    </select>
+
+    <button type="submit">Submit Application</button>   
+</form>
+<div id="success-msg" style="display:none; text-align:center; padding:2rem;">
+  
+  <h2 style="color:#0B1F3A; font-size:2rem;">✅ Application Received!</h2>
+  
+  <p style="color:#6B7280; margin-top:1rem; font-size:1rem;">
+    Thank you for applying to HORLA OLUWA.<br/>
+    Our admissions team will contact you within <strong>24 hours.</strong>
+  </p>
+
+  <!-- Application ID Box -->
+  <div style="
+    background: #FAF6EF;
+    border: 2px dashed #C9922A;
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin: 1.5rem auto;
+    max-width: 350px;
+  ">
+    <p style="font-size:0.85rem; color:#6B7280; margin-bottom:0.5rem;">
+      Your Application ID
+    </p>
+    <h3 id="app-id-display" style="
+      font-size: 1.8rem;
+      font-family: 'Playfair Display', serif;
+      color: #0B1F3A;
+      letter-spacing: 0.1em;
+    "></h3>
+    <p style="font-size:0.75rem; color:#C9922A; margin-top:0.5rem;">
+      ⚠️ Save this ID — you'll need it to complete payment later
+    </p>
+  </div>
+
+ <p id="payment-status-text" style="color:#6B7280; font-size:0.85rem;">
+  Payment Status: <strong style="color:orange;">PENDING</strong>
+</p>
+
+
+
+
+
+  <!-- Download Button -->
+  <button 
+    onclick="downloadPDF()"
+    style="
+      margin-top: 1.5rem;
+      padding: 0.9rem 2rem;
+      background: #0B1F3A;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 1rem;
+      font-weight: bold;
+      cursor: pointer;
+    ">
+    📄 Download Application PDF
+  </button>
+
+</div>
+</section>
+
+<!-- APPLICATION ID LOOKUP -->
+<section id="lookup" style="padding:4rem 3rem; background:#0B1F3A; text-align:center;">
+  
+  <h2 style="font-family:'Playfair Display',serif; color:#E8B84B; margin-bottom:0.5rem;">
+    Already Applied?
+  </h2>
+  <p style="color:rgba(255,255,255,0.6); font-size:0.95rem; margin-bottom:2rem;">
+    Enter your Application ID to check your payment status and download your documents
+  </p>
+
+  <div style="
+    display:inline-block;
+    background:rgba(255,255,255,0.05);
+    border:1px solid rgba(201,146,42,0.3);
+    padding:2.5rem;
+    border-radius:16px;
+    width:100%;
+    max-width:500px;
+    text-align:left;
+  ">
+
+    <input 
+      type="text" 
+      id="lookup-id"
+      placeholder="e.g. HORLA-2026-0001"
+      style="
+        width:100%;
+        padding:0.8rem 1rem;
+        margin-bottom:1rem;
+        border:1.5px solid rgba(201,146,42,0.3);
+        border-radius:8px;
+        font-size:0.9rem;
+        background:rgba(255,255,255,0.08);
+        color:white;
+        outline:none;
+      "
+    />
+
+    <button 
+      onclick="lookupApplication()"
+      style="
+        width:100%;
+        padding:1rem;
+        background:linear-gradient(135deg, #C9922A, #E8B84B);
+        color:#0B1F3A;
+        border:none;
+        border-radius:10px;
+        font-size:1rem;
+        font-weight:bold;
+        cursor:pointer;
+      ">
+      🔍 Search Application
+    </button>
+
+    <!-- Result Box -->
+    <div id="lookup-result" style="display:none; margin-top:1.5rem;">
+      
+      <div style="
+        background:rgba(255,255,255,0.08);
+        border:1px solid rgba(201,146,42,0.3);
+        border-radius:12px;
+        padding:1.5rem;
+      ">
+        <p style="color:#E8B84B; font-size:0.75rem; font-weight:bold; letter-spacing:0.1em; text-transform:uppercase; margin-bottom:1rem;">
+          Application Found ✅
+        </p>
+
+        <table style="width:100%; font-size:0.875rem; border-collapse:collapse;">
+          <tr>
+            <td style="color:rgba(255,255,255,0.5); padding:0.4rem 0;">Application ID</td>
+            <td id="r-id" style="color:white; font-weight:bold; text-align:right;"></td>
+          </tr>
+          <tr>
+            <td style="color:rgba(255,255,255,0.5); padding:0.4rem 0;">Full Name</td>
+            <td id="r-name" style="color:white; text-align:right;"></td>
+          </tr>
+          <tr>
+            <td style="color:rgba(255,255,255,0.5); padding:0.4rem 0;">Course</td>
+            <td id="r-course" style="color:white; text-align:right;"></td>
+          </tr>
+          <tr>
+            <td style="color:rgba(255,255,255,0.5); padding:0.4rem 0;">Date Applied</td>
+            <td id="r-date" style="color:white; text-align:right;"></td>
+          </tr>
+          <tr>
+            <td style="color:rgba(255,255,255,0.5); padding:0.4rem 0;">Payment Status</td>
+            <td id="r-status" style="font-weight:bold; text-align:right;"></td>
+          </tr>
+        </table>
+
+        <!-- Buttons -->
+        <div style="margin-top:1.5rem; display:flex; flex-direction:column; gap:0.75rem;">
+          <button
+            onclick="lookupDownloadPDF()"
+            style="
+              padding:0.8rem;
+              background:#0B1F3A;
+              color:white;
+              border:1px solid rgba(255,255,255,0.2);
+              border-radius:8px;
+              font-size:0.9rem;
+              font-weight:bold;
+              cursor:pointer;
+            ">
+            📄 Download Application PDF
+          </button>
+
+          <button
+            id="lookup-admission-btn"
+            onclick="lookupDownloadAdmission()"
+            style="
+              display:none;
+              padding:0.8rem;
+              background:linear-gradient(135deg, #C9922A, #E8B84B);
+              color:#0B1F3A;
+              border:none;
+              border-radius:8px;
+              font-size:0.9rem;
+              font-weight:bold;
+              cursor:pointer;
+            ">
+            🎓 Download Admission Letter
+          </button>
+        </div>
+
+      </div>
+
+    </div>
+
+    <!-- Error -->
+    <p id="lookup-error" style="display:none; color:#ff6b6b; font-size:0.85rem; margin-top:1rem; text-align:center;">
+      ❌ Application ID not found. Please check and try again.
+    </p>
+
+  </div>
+</section>
+
+<!-- ADMIN DASHBOARD -->
+<section id="admin-login" style="display:none; padding:4rem 3rem; text-align:center;">
+  <h2 style="font-family:'Playfair Display',serif; color:#0B1F3A; margin-bottom:0.5rem;">Admin Login</h2>
+  <p style="color:#6B7280; margin-bottom:2rem; font-size:0.9rem;">Restricted access — authorized personnel only</p>
+
+  <div style="
+    display:inline-block;
+    background:white;
+    padding:2.5rem;
+    border-radius:16px;
+    box-shadow:0 10px 40px rgba(0,0,0,0.08);
+    width:100%;
+    max-width:400px;
+    text-align:left;
+  ">
+    <input 
+      type="password" 
+      id="admin-password" 
+      placeholder="Enter Admin Password"
+      style="
+        width:100%;
+        padding:0.8rem 1rem;
+        margin-bottom:1rem;
+        border:1.5px solid rgba(0,0,0,0.1);
+        border-radius:8px;
+        font-size:0.9rem;
+        background:#FAF6EF;
+        outline:none;
+      "
+    />
+    <button 
+      onclick="adminLogin()"
+      style="
+        width:100%;
+        padding:1rem;
+        background:#0B1F3A;
+        color:white;
+        border:none;
+        border-radius:10px;
+        font-size:1rem;
+        font-weight:bold;
+        cursor:pointer;
+      ">
+      Login to Dashboard
+    </button>
+    <p id="admin-error" style="color:red; font-size:0.8rem; margin-top:0.75rem; display:none;">
+      ❌ Incorrect password. Try again.
+    </p>
+  </div>
+</section>
+
+<!-- ADMIN DASHBOARD PANEL -->
+<section id="admin-panel" style="display:none; padding:4rem 3rem;">
+  <div style="max-width:900px; margin:0 auto;">
+    
+    <!-- Header -->
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:2rem; flex-wrap:wrap; gap:1rem;">
+      <div>
+        <h2 style="font-family:'Playfair Display',serif; color:#0B1F3A;">Admin Dashboard</h2>
+        <p style="color:#6B7280; font-size:0.85rem;">All applicants and payment status</p>
+      </div>
+      <button 
+        onclick="adminLogout()"
+        style="
+          padding:0.6rem 1.5rem;
+          background:#C9922A;
+          color:#0B1F3A;
+          border:none;
+          border-radius:8px;
+          font-weight:bold;
+          cursor:pointer;
+          font-size:0.85rem;
+        ">
+        Logout
+      </button>
+    </div>
+
+    <!-- Stats Row -->
+    <div style="display:flex; gap:1rem; margin-bottom:2rem; flex-wrap:wrap;">
+      
+      <div style="flex:1; min-width:150px; background:white; border-radius:12px; padding:1.5rem; box-shadow:0 4px 20px rgba(0,0,0,0.06); text-align:center;">
+        <h3 id="total-count" style="font-size:2rem; font-family:'Playfair Display',serif; color:#0B1F3A;">0</h3>
+        <p style="font-size:0.8rem; color:#6B7280;">Total Applicants</p>
+      </div>
+
+      <div style="flex:1; min-width:150px; background:white; border-radius:12px; padding:1.5rem; box-shadow:0 4px 20px rgba(0,0,0,0.06); text-align:center;">
+        <h3 id="paid-count" style="font-size:2rem; font-family:'Playfair Display',serif; color:green;">0</h3>
+        <p style="font-size:0.8rem; color:#6B7280;">Paid</p>
+      </div>
+
+      <div style="flex:1; min-width:150px; background:white; border-radius:12px; padding:1.5rem; box-shadow:0 4px 20px rgba(0,0,0,0.06); text-align:center;">
+        <h3 id="pending-count" style="font-size:2rem; font-family:'Playfair Display',serif; color:orange;">0</h3>
+        <p style="font-size:0.8rem; color:#6B7280;">Pending</p>
+      </div>
+
+    </div>
+
+    <!-- Search -->
+    <input 
+      type="text" 
+      id="admin-search"
+      placeholder="🔍 Search by name, email or Application ID..."
+      oninput="renderApplicants()"
+      style="
+        width:100%;
+        padding:0.8rem 1rem;
+        margin-bottom:1.5rem;
+        border:1.5px solid rgba(0,0,0,0.1);
+        border-radius:8px;
+        font-size:0.9rem;
+        background:#FAF6EF;
+        outline:none;
+      "
+    />
+
+    <!-- Applicants Table -->
+    <div id="applicants-table" style="background:white; border-radius:16px; overflow:hidden; box-shadow:0 4px 20px rgba(0,0,0,0.06);">
+    </div>
+
+  </div>
+</section>
+
+<!-- WHATSAPP FLOATING BUTTON -->
+<a 
+  href="https://wa.me/2349050123981" 
+  target="_blank"
+  id="whatsapp-btn"
+  style="
+    position: fixed;
+    bottom: 2rem;
+    right: 2rem;
+    background: #25D366;
+    color: white;
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.8rem;
+    box-shadow: 0 4px 20px rgba(37,211,102,0.4);
+    text-decoration: none;
+    z-index: 999;
+    transition: transform 0.2s, box-shadow 0.2s;
+  "
+  onmouseover="this.style.transform='scale(1.1)'; this.style.boxShadow='0 6px 25px rgba(37,211,102,0.6)';"
+  onmouseout="this.style.transform='scale(1)'; this.style.boxShadow='0 4px 20px rgba(37,211,102,0.4)';"
+  title="Chat with us on WhatsApp"
+>
+  💬
+</a>
+
+<!--FOOTER-->
+<footer>
+    <p> &copy; 2026 HORLA OLUWA. All rights reserved.</p>
+<p style="margin-top:0.5rem;">
+  <a href="#" onclick="showAdminLogin()" style="color:rgba(255,255,255,0.2); font-size:0.75rem; text-decoration:none;">
+    Admin Access
+  </a>
+</p>
+</body>
+
+<script>
+console.log("Javascript is Working!");
+
+// Email verification
+let generatedCode = null;
+let emailVerified = false;
+
+function sendVerificationCode() {
+  const email = document.getElementById("email").value.trim().toLowerCase();
+  const status = document.getElementById("gmail-status");
+  const btn = document.getElementById("send-code-btn");
+
+  if (!email.endsWith("@gmail.com") || email.length < 10) {
+    status.textContent = "❌ Please enter a valid Gmail address first!";
+    status.style.color = "red";
+    return;
+  }
+
+  // Generate 6-digit code
+  generatedCode = Math.floor(100000 + Math.random() * 900000).toString();
+
+  // Disable button
+  btn.textContent = "⏳ Sending...";
+  btn.disabled = true;
+
+  // Send via EmailJS
+  emailjs.send("service_tk6bkex", "template_sgehxjc", {
+    to_email: email,
+    code: generatedCode,
+    reply_to: email,
+  }).then(function() {
+    status.textContent = "✅ Code sent! Check your Gmail inbox.";
+    status.style.color = "green";
+    btn.textContent = "📧 Resend Code";
+    btn.disabled = false;
+    document.getElementById("code-input-section").style.display = "block";
+  }).catch(function(error) {
+    status.textContent = "❌ Failed to send code. Try again!";
+    status.style.color = "red";
+    btn.textContent = "📧 Send Verification Code";
+    btn.disabled = false;
+    console.log("EmailJS error:", error);
+  });
+}
+
+function verifyCode() {
+  const inputCode = document.getElementById("verification-code").value.trim();
+  const status = document.getElementById("verify-status");
+
+  if (inputCode === generatedCode) {
+    emailVerified = true;
+    status.textContent = "✅ Email verified successfully!";
+    status.style.color = "green";
+    document.getElementById("verification-code").style.borderColor = "green";
+    document.getElementById("code-input-section").querySelector("button").style.background = "#6B7280";
+    document.getElementById("code-input-section").querySelector("button").disabled = true;
+  } else {
+    status.textContent = "❌ Incorrect code. Please try again!";
+    status.style.color = "red";
+  }
+}
+
+function validateGmail(input) {
+  const status = document.getElementById("gmail-status");
+  const value = input.value.trim().toLowerCase();
+
+  if (value === "") {
+    status.textContent = "";
+    return;
+  }
+
+  if (value.endsWith("@gmail.com") && value.length > 10) {
+    status.textContent = "✅ Valid Gmail address";
+    status.style.color = "green";
+    input.style.borderColor = "green";
+  } else {
+    status.textContent = "❌ Please enter a valid Gmail address (e.g. you@gmail.com)";
+    status.style.color = "red";
+    input.style.borderColor = "red";
+  }
+}
+
+// Progress bar
+function updateProgress() {
+  const step1Fields = ["firstName", "lastName", "email", "phone", "dob"];
+  const step2Fields = ["course", "schedule"];
+  const step3Fields = ["portal-password", "portal-password-confirm"];
+
+  const step1Done = step1Fields.every(id => document.getElementById(id).value.trim() !== "");
+  const step2Done = step2Fields.every(id => document.getElementById(id).value.trim() !== "" && !document.getElementById(id).value.includes("Select") && !document.getElementById(id).value.includes("Preferred"));
+  const step3Done = step3Fields.every(id => document.getElementById(id).value.trim() !== "");
+
+  let step = 1;
+  let percent = 33;
+  let label = "Step 1 of 3 — Personal Details";
+
+  if (step1Done && !step2Done) {
+    step = 2;
+    percent = 66;
+    label = "Step 2 of 3 — Course Selection";
+  } else if (step1Done && step2Done && !step3Done) {
+    step = 3;
+    percent = 90;
+    label = "Step 3 of 3 — Security Setup";
+  } else if (step1Done && step2Done && step3Done) {
+    step = 3;
+    percent = 100;
+    label = "✅ All done! Ready to submit";
+  }
+
+  // Update bar
+  document.getElementById("progress-bar").style.width = percent + "%";
+  document.getElementById("progress-percent").textContent = percent + "%";
+  document.getElementById("progress-label").textContent = label;
+
+  // Update dots
+  for (let i = 1; i <= 3; i++) {
+    const dot = document.getElementById("dot-" + i);
+    const dotLabel = dot.nextElementSibling;
+    if (i < step || (i === step && percent === 100)) {
+      dot.style.background = "#C9922A";
+      dot.style.color = "white";
+      dotLabel.style.color = "#C9922A";
+      dotLabel.style.fontWeight = "bold";
+    } else if (i === step) {
+      dot.style.background = "#C9922A";
+      dot.style.color = "white";
+      dotLabel.style.color = "#C9922A";
+      dotLabel.style.fontWeight = "bold";
+    } else {
+      dot.style.background = "#e5e7eb";
+      dot.style.color = "#9ca3af";
+      dotLabel.style.color = "#9ca3af";
+      dotLabel.style.fontWeight = "normal";
+    }
+  }
+}
+
+// Attach progress tracking to all form fields
+document.addEventListener("DOMContentLoaded", function() {
+  const fields = ["firstName", "lastName", "email", "phone", "dob", "course", "schedule", "portal-password", "portal-password-confirm"];
+  fields.forEach(id => {
+    const el = document.getElementById(id);
+    if (el) {
+      el.addEventListener("input", updateProgress);
+      el.addEventListener("change", updateProgress);
+    }
+  });
+});
+
+// Convert logo to base64 when page loads
+let logoBase64 = null;
+
+window.onload = function() {
+  const img = document.querySelector("nav .logo img");
+  const canvas = document.createElement("canvas");
+  canvas.width = img.naturalWidth;
+  canvas.height = img.naturalHeight;
+  const ctx = canvas.getContext("2d");
+  ctx.drawImage(img, 0, 0);
+  logoBase64 = canvas.toDataURL("image/jpeg");
+}
+
+function showPassportName(input) {
+  const status = document.getElementById("passport-status");
+  if (input.files && input.files[0]) {
+    status.textContent = "✅ Passport uploaded: " + input.files[0].name;
+    status.style.color = "green";
+  } else {
+    status.textContent = "No file chosen";
+    status.style.color = "#C9922A";
+  }
+}
+
+function generateAppID() {
+  const year = new Date().getFullYear();
+  let count = parseInt(localStorage.getItem("horla_app_count") || "0");
+  count = count + 1;
+  localStorage.setItem("horla_app_count", count);
+  const formatted = String(count).padStart(4, "0");
+  return `HORLA-${year}-${formatted}`;
+}
+  // This runs when the form is submitted
+  async function handleSubmit(event) {
+  event.preventDefault();
+
+// Validate Gmail
+  const emailValue = document.getElementById("email").value.trim().toLowerCase();
+  if (!emailValue.endsWith("@gmail.com")) {
+    alert("❌ Please enter a valid Gmail address!");
+    return;
+  }
+
+  // Check email verified
+  if (!emailVerified) {
+    alert("❌ Please verify your Gmail address first!");
+    return;
+  }
+
+  // Check if passwords match
+  const portalPassword = document.getElementById("portal-password").value;
+  const portalPasswordConfirm = document.getElementById("portal-password-confirm").value;
+
+  if (portalPassword === "") {
+    alert("❌ Please create a portal password!");
+    return;
+  }
+
+  if (portalPassword !== portalPasswordConfirm) {
+    alert("❌ Passwords do not match! Please try again.");
+    return;
+  }
+
+  // Check if email already used in JSONBin
+  const existingApplicants = await getApplicants();
+  const alreadyUsed = existingApplicants.some(a => a.email === emailValue);
+  if (alreadyUsed) {
+    alert("❌ This email has already been used to apply! Each applicant must use a unique email address.");
+    return;
+  }
+
+  // Generate the ID
+  const appID = generateAppID();
+
+  // Show loading
+  const submitBtn = document.querySelector("#apply-form button[type='submit']");
+  submitBtn.textContent = "⏳ Submitting...";
+  submitBtn.disabled = true;
+
+  // Collect all form data
+  const applicant = {
+    id: appID,
+    firstName: document.getElementById("firstName").value,
+    lastName: document.getElementById("lastName").value,
+    email: document.getElementById("email").value,
+    phone: document.getElementById("phone").value,
+    dob: document.getElementById("dob").value,
+    course: document.getElementById("course").value,
+    schedule: document.getElementById("schedule").value,
+    date: new Date().toLocaleDateString("en-GB"),
+    status: "PENDING",
+    password: portalPassword
+  };
+
+  // Read passport image then save
+  const passportFile = document.getElementById("passport").files[0];
+  if (passportFile) {
+    const reader = new FileReader();
+    reader.onload = async function(e) {
+      applicant.passport = e.target.result;
+      const saved = await saveApplicant(applicant);
+      if (saved) {
+        localStorage.setItem("applicant_" + appID, JSON.stringify(applicant));
+        showSuccess(appID, applicant);
+      } else {
+        alert("❌ Something went wrong saving your application. Please try again!");
+        submitBtn.textContent = "Submit Application";
+        submitBtn.disabled = false;
+      }
+    };
+    reader.readAsDataURL(passportFile);
+  } else {
+    const saved = await saveApplicant(applicant);
+    if (saved) {
+      localStorage.setItem("applicant_" + appID, JSON.stringify(applicant));
+      showSuccess(appID, applicant);
+    } else {
+      alert("❌ Something went wrong saving your application. Please try again!");
+      submitBtn.textContent = "Submit Application";
+      submitBtn.disabled = false;
+    }
+  }
+}
+
+function showSuccess(appID, applicant) {
+  // Hide the form
+  document.getElementById("apply-form").style.display = "none";
+
+  // Show success message
+  document.getElementById("success-msg").style.display = "block";
+  document.getElementById("app-id-display").textContent = appID;
+
+  // Show payment amount based on course
+  const courseAmounts = {
+    " Basic Computer Skills": "₦30,000",
+    " Microsoft Office Suite Package Only": "₦40,000",
+    " Both the Basic & Microsoft Office Suite Package": "₦70,000",
+    " Programming & Coding": "₦100,000",
+    " Digital Literacy & Internet": "₦15,000",
+    " Full Package for all": "₦150,000",
+  };
+
+  const selectedCourse = document.getElementById("course").value;
+  const amountEl = document.getElementById("payment-amount");
+  const refEl = document.getElementById("payment-reference");
+  if (amountEl) amountEl.textContent = courseAmounts[selectedCourse] || "Contact us";
+  if (refEl) refEl.textContent = appID;
+}
+
+// ===== LOOKUP FUNCTIONS =====
+let currentLookupApplicant = null;
+
+async function lookupApplication() {
+  const inputID = document.getElementById("lookup-id").value.trim().toUpperCase();
+  
+  // Hide previous results
+  document.getElementById("lookup-result").style.display = "none";
+  document.getElementById("lookup-error").style.display = "none";
+
+  // Search in JSONBin
+  const applicants = await getApplicants();
+  const applicant = applicants.find(a => a.id === inputID);
+
+  if (!applicant) {
+    // Try localStorage as fallback
+    const local = localStorage.getItem("applicant_" + inputID);
+    if (!local) {
+      document.getElementById("lookup-error").style.display = "block";
+      return;
+    }
+    currentLookupApplicant = JSON.parse(local);
+  } else {
+    currentLookupApplicant = applicant;
+    // Sync to localStorage
+    localStorage.setItem("applicant_" + inputID, JSON.stringify(applicant));
+  }
+
+  // Fill result box
+  const foundApplicant = currentLookupApplicant;
+  document.getElementById("r-id").textContent = foundApplicant.id;
+  document.getElementById("r-name").textContent = foundApplicant.firstName + " " + foundApplicant.lastName;
+  document.getElementById("r-course").textContent = foundApplicant.course;
+  document.getElementById("r-date").textContent = foundApplicant.date;
+
+  // Payment status
+  const statusEl = document.getElementById("r-status");
+  if (foundApplicant.status === "PAID") {
+    statusEl.textContent = "PAID";
+    statusEl.style.color = "#4CAF50";
+    document.getElementById("lookup-admission-btn").style.display = "block";
+  } else {
+    statusEl.textContent = "PENDING";
+    statusEl.style.color = "orange";
+    document.getElementById("lookup-admission-btn").style.display = "none";
+  }
+
+  // Show result
+  document.getElementById("lookup-result").style.display = "block";
+}
+
+function lookupDownloadPDF() {
+  if (!currentLookupApplicant) return;
+
+  const applicant = currentLookupApplicant;
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF();
+
+  // ===== HEADER =====
+  doc.setFillColor(11, 31, 58);
+  doc.rect(0, 0, 210, 40, "F");
+
+  if (logoBase64) {
+    doc.addImage(logoBase64, "JPEG", 8, 6, 25, 25);
+  }
+
+  doc.setTextColor(232, 184, 75);
+  doc.setFontSize(18);
+  doc.setFont("helvetica", "bold");
+  doc.text("HORLA OLUWA MULTIPURPOSE", 105, 15, { align: "center" });
+  doc.text("INVESTMENT LIMITED", 105, 24, { align: "center" });
+
+  doc.setFontSize(10);
+  doc.setTextColor(255, 255, 255);
+  doc.text("Computer Training & Education", 105, 33, { align: "center" });
+
+  // ===== TITLE =====
+  doc.setTextColor(11, 31, 58);
+  doc.setFontSize(13);
+  doc.setFont("helvetica", "bold");
+  doc.text("APPLICATION FORM", 105, 53, { align: "center" });
+
+  doc.setDrawColor(201, 146, 42);
+  doc.setLineWidth(0.8);
+  doc.line(70, 56, 140, 56);
+
+  // ===== PASSPORT =====
+  if (applicant.passport) {
+    doc.addImage(applicant.passport, "JPEG", 158, 44, 38, 42);
+    doc.setDrawColor(201, 146, 42);
+    doc.setLineWidth(0.5);
+    doc.rect(158, 44, 38, 42);
+  }
+
+  // ===== APPLICATION ID BOX =====
+  doc.setFillColor(250, 246, 239);
+  doc.setDrawColor(201, 146, 42);
+  doc.setLineWidth(0.5);
+  doc.roundedRect(14, 62, 135, 14, 3, 3, "FD");
+
+  doc.setFontSize(10);
+  doc.setFont("helvetica", "bold");
+  doc.setTextColor(11, 31, 58);
+  doc.text("Application ID:", 20, 71);
+
+  doc.setTextColor(201, 146, 42);
+  doc.text(applicant.id, 60, 71);
+
+  doc.setFont("helvetica", "normal");
+  doc.setTextColor(11, 31, 58);
+  doc.text("Date: " + applicant.date, 20, 83);
+
+  // ===== PERSONAL DETAILS =====
+  doc.setFontSize(11);
+  doc.setFont("helvetica", "bold");
+  doc.setTextColor(11, 31, 58);
+  doc.text("PERSONAL DETAILS", 14, 96);
+
+  doc.setDrawColor(201, 146, 42);
+  doc.setLineWidth(0.4);
+  doc.line(14, 98, 100, 98);
+
+  const details = [
+    ["Full Name", applicant.firstName + " " + applicant.lastName],
+    ["Email Address", applicant.email],
+    ["Phone Number", applicant.phone],
+    ["Date of Birth", applicant.dob],
+  ];
+
+  let y = 108;
+  doc.setFontSize(10);
+  details.forEach(([label, value]) => {
+    doc.setFont("helvetica", "bold");
+    doc.setTextColor(100, 100, 100);
+    doc.text(label + ":", 14, y);
+    doc.setFont("helvetica", "normal");
+    doc.setTextColor(11, 31, 58);
+    doc.text(value || "N/A", 70, y);
+    y += 10;
+  });
+
+  // ===== COURSE DETAILS =====
+  doc.setFontSize(11);
+  doc.setFont("helvetica", "bold");
+  doc.setTextColor(11, 31, 58);
+  doc.text("COURSE DETAILS", 14, y + 6);
+
+  doc.setDrawColor(201, 146, 42);
+  doc.line(14, y + 8, 100, y + 8);
+
+  y += 18;
+  const courseDetails = [
+    ["Selected Course", applicant.course],
+    ["Preferred Schedule", applicant.schedule],
+  ];
+
+  courseDetails.forEach(([label, value]) => {
+    doc.setFont("helvetica", "bold");
+    doc.setTextColor(100, 100, 100);
+    doc.text(label + ":", 14, y);
+    doc.setFont("helvetica", "normal");
+    doc.setTextColor(11, 31, 58);
+    doc.text(value || "N/A", 70, y);
+    y += 10;
+  });
+
+  // ===== PAYMENT STATUS =====
+  y += 6;
+  doc.setFillColor(255, 248, 230);
+  doc.setDrawColor(201, 146, 42);
+  doc.roundedRect(14, y, 182, 16, 3, 3, "FD");
+
+  doc.setFontSize(11);
+  doc.setFont("helvetica", "bold");
+  doc.setTextColor(11, 31, 58);
+  doc.text("Payment Status:", 20, y + 10);
+
+  if (applicant.status === "PAID") {
+    doc.setTextColor(0, 128, 0);
+    doc.text("PAID", 75, y + 10);
+  } else {
+    doc.setTextColor(200, 100, 0);
+    doc.text("PENDING", 75, y + 10);
+  }
+
+  // ===== FOOTER =====
+  doc.setFillColor(11, 31, 58);
+  doc.rect(0, 285, 210, 12, "F");
+  doc.setTextColor(232, 184, 75);
+  doc.setFontSize(8);
+  doc.text("© 2026 HORLA OLUWA Multipurpose Investment Limited", 105, 292, { align: "center" });
+
+  doc.save("HORLA-OLUWA-Application-" + applicant.id + ".pdf");
+}
+
+function lookupDownloadAdmission() {
+  if (!currentLookupApplicant) return;
+  const applicant = currentLookupApplicant;
+
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF();
+
+  // ===== HEADER =====
+  doc.setFillColor(11, 31, 58);
+  doc.rect(0, 0, 210, 40, "F");
+
+  if (logoBase64) {
+    doc.addImage(logoBase64, "JPEG", 8, 6, 25, 25);
+  }
+
+  doc.setTextColor(232, 184, 75);
+  doc.setFontSize(18);
+  doc.setFont("helvetica", "bold");
+  doc.text("HORLA OLUWA MULTIPURPOSE", 105, 15, { align: "center" });
+  doc.text("INVESTMENT LIMITED", 105, 24, { align: "center" });
+
+  doc.setFontSize(10);
+  doc.setTextColor(255, 255, 255);
+  doc.text("Computer Training & Education", 105, 33, { align: "center" });
+
+  // ===== TITLE =====
+  doc.setTextColor(11, 31, 58);
+  doc.setFontSize(14);
+  doc.setFont("helvetica", "bold");
+  doc.text("ADMISSION LETTER", 105, 55, { align: "center" });
+
+  doc.setDrawColor(201, 146, 42);
+  doc.setLineWidth(0.8);
+  doc.line(65, 58, 145, 58);
+
+  // ===== PASSPORT =====
+  if (applicant.passport) {
+    doc.addImage(applicant.passport, "JPEG", 158, 48, 38, 42);
+    doc.setDrawColor(201, 146, 42);
+    doc.setLineWidth(0.5);
+    doc.rect(158, 48, 38, 42);
+  }
+
+  // ===== DATE & ID =====
+  doc.setFontSize(10);
+  doc.setFont("helvetica", "normal");
+  doc.setTextColor(100, 100, 100);
+  doc.text("Date: " + applicant.date, 14, 70);
+  doc.text("Application ID: " + applicant.id, 14, 78);
+
+  // ===== GREETING =====
+  doc.setFontSize(11);
+  doc.setFont("helvetica", "normal");
+  doc.setTextColor(11, 31, 58);
+  doc.text("Dear " + applicant.firstName + " " + applicant.lastName + ",", 14, 100);
+
+  // ===== BODY =====
+  doc.setFontSize(10);
+  doc.setTextColor(50, 50, 50);
+  doc.text("We are pleased to inform you that your application to HORLA OLUWA Multipurpose", 14, 113);
+  doc.text("Investment Limited has been reviewed and you have been offered admission into our", 14, 121);
+  doc.text("computer training program.", 14, 129);
+
+  // ===== DETAILS BOX =====
+  doc.setFillColor(250, 246, 239);
+  doc.setDrawColor(201, 146, 42);
+  doc.roundedRect(14, 137, 182, 55, 3, 3, "FD");
+
+  doc.setFontSize(11);
+  doc.setFont("helvetica", "bold");
+  doc.setTextColor(11, 31, 58);
+  doc.text("ENROLLMENT DETAILS", 105, 148, { align: "center" });
+
+  const enrollDetails = [
+    ["Full Name", applicant.firstName + " " + applicant.lastName],
+    ["Course Enrolled", applicant.course],
+    ["Class Schedule", applicant.schedule],
+    ["Payment Status", "PAID"],
+  ];
+
+  let y = 158;
+  enrollDetails.forEach(([label, value]) => {
+    doc.setFont("helvetica", "bold");
+    doc.setTextColor(100, 100, 100);
+    doc.text(label + ":", 20, y);
+    doc.setFont("helvetica", "normal");
+    doc.setTextColor(label === "Payment Status" ? 0 : 11, label === "Payment Status" ? 128 : 31, label === "Payment Status" ? 0 : 58);
+    doc.text(value || "N/A", 80, y);
+    y += 10;
+  });
+
+  // ===== CLOSING =====
+  doc.setFontSize(10);
+  doc.setFont("helvetica", "normal");
+  doc.setTextColor(50, 50, 50);
+  doc.text("Please report to our office with this letter on your first day of class.", 14, 205);
+  doc.text("We look forward to having you and wish you a productive learning experience.", 14, 215);
+
+  // ===== SIGNATURE =====
+  doc.text("Yours faithfully,", 14, 232);
+  doc.setDrawColor(11, 31, 58);
+  doc.setLineWidth(0.5);
+  doc.line(14, 243, 100, 243);
+  doc.setFont("helvetica", "bold");
+  doc.setTextColor(11, 31, 58);
+  doc.text("HORLA OLUWA Multipurpose Investment Limited", 14, 250);
+  doc.setFont("helvetica", "normal");
+  doc.setFontSize(9);
+  doc.setTextColor(100, 100, 100);
+  doc.text("Authorized Signatory", 14, 257);
+
+  // ===== FOOTER =====
+  doc.setFillColor(11, 31, 58);
+  doc.rect(0, 285, 210, 12, "F");
+  doc.setTextColor(232, 184, 75);
+  doc.setFontSize(8);
+  doc.text("HORLA OLUWA Multipurpose Investment Limited © 2026", 105, 292, { align: "center" });
+
+  doc.save("HORLA-OLUWA-Admission-" + applicant.id + ".pdf");
+}
+
+// ===== ADMIN FUNCTIONS =====
+
+const ADMIN_PASSWORD = "horlaoluwa2026";
+
+function showAdminLogin() {
+  // Hide all sections
+  document.getElementById("admin-login").style.display = "block";
+  // Scroll to it
+  document.getElementById("admin-login").scrollIntoView({ behavior: "smooth" });
+}
+
+function adminLogin() {
+  const password = document.getElementById("admin-password").value;
+  
+  if (password === ADMIN_PASSWORD) {
+    // Hide login form
+    document.getElementById("admin-login").style.display = "none";
+    // Show dashboard
+    document.getElementById("admin-panel").style.display = "block";
+    // Load applicants
+    renderApplicants();
+    // Scroll to dashboard
+    document.getElementById("admin-panel").scrollIntoView({ behavior: "smooth" });
+  } else {
+    document.getElementById("admin-error").style.display = "block";
+  }
+}
+
+function adminLogout() {
+  document.getElementById("admin-panel").style.display = "none";
+  document.getElementById("admin-login").style.display = "none";
+  document.getElementById("admin-password").value = "";
+}
+
+async function renderApplicants() {
+  const search = document.getElementById("admin-search").value.toLowerCase();
+  
+  // Get all applicants from JSONBin
+  const applicants = await getApplicants();
+
+  // Update stats
+  document.getElementById("total-count").textContent = applicants.length;
+  document.getElementById("paid-count").textContent = applicants.filter(a => a.status === "PAID").length;
+  document.getElementById("pending-count").textContent = applicants.filter(a => a.status === "PENDING").length;
+
+  // Filter by search
+  const filtered = applicants.filter(a => {
+    const fullName = (a.firstName + " " + a.lastName).toLowerCase();
+    return (
+      fullName.includes(search) ||
+      a.email.toLowerCase().includes(search) ||
+      a.id.toLowerCase().includes(search)
+    );
+  });
+
+  // Build table
+  const table = document.getElementById("applicants-table");
+
+  if (filtered.length === 0) {
+    table.innerHTML = `
+      <div style="padding:3rem; text-align:center; color:#6B7280;">
+        No applicants found.
+      </div>
+    `;
+    return;
+  }
+
+  let html = `
+    <table style="width:100%; border-collapse:collapse; font-size:0.85rem;">
+      <thead>
+        <tr style="background:#0B1F3A; color:white;">
+          <th style="padding:1rem; text-align:left;">App ID</th>
+          <th style="padding:1rem; text-align:left;">Full Name</th>
+          <th style="padding:1rem; text-align:left;">Email</th>
+          <th style="padding:1rem; text-align:left;">Course</th>
+          <th style="padding:1rem; text-align:left;">Status</th>
+          <th style="padding:1rem; text-align:left;">Action</th>
+        </tr>
+      </thead>
+      <tbody>
+  `;
+
+  filtered.forEach((a, index) => {
+    const bg = index % 2 === 0 ? "#ffffff" : "#FAF6EF";
+    const statusColor = a.status === "PAID" ? "green" : "orange";
+    
+    html += `
+      <tr style="background:${bg}; border-bottom:1px solid rgba(0,0,0,0.05);">
+        <td style="padding:0.9rem 1rem; font-weight:bold; color:#C9922A;">${a.id}</td>
+        <td style="padding:0.9rem 1rem; color:#0B1F3A;">${a.firstName} ${a.lastName}</td>
+        <td style="padding:0.9rem 1rem; color:#6B7280;">${a.email}</td>
+        <td style="padding:0.9rem 1rem; color:#6B7280;">${a.course}</td>
+        <td style="padding:0.9rem 1rem;">
+          <span style="
+            background:${a.status === "PAID" ? "#e6f9e6" : "#fff8e6"};
+            color:${statusColor};
+            padding:0.3rem 0.75rem;
+            border-radius:100px;
+            font-weight:bold;
+            font-size:0.75rem;
+          ">${a.status}</span>
+        </td>
+        <td style="padding:0.9rem 1rem;">
+          ${a.status === "PENDING" ? `
+            <button 
+              onclick="adminConfirmPayment('${a.id}')"
+              style="
+                padding:0.4rem 1rem;
+                background:#0B1F3A;
+                color:white;
+                border:none;
+                border-radius:6px;
+                font-size:0.8rem;
+                font-weight:bold;
+                cursor:pointer;
+              ">
+              Confirm Payment
+            </button>
+          ` : `
+            <span style="color:green; font-size:0.8rem; font-weight:bold;">✅ Confirmed</span>
+          `}
+        </td>
+      </tr>
+    `;
+  });
+
+  html += `</tbody></table>`;
+  table.innerHTML = html;
+}
+
+async function adminConfirmPayment(appID) {
+  const updated = await updateApplicant(appID, { status: "PAID" });
+  if (updated) {
+    // Also update localStorage
+    const key = "applicant_" + appID;
+    const local = localStorage.getItem(key);
+    if (local) {
+      const applicant = JSON.parse(local);
+      applicant.status = "PAID";
+      localStorage.setItem(key, JSON.stringify(applicant));
+    }
+    alert("✅ Payment confirmed!");
+    renderApplicants();
+  } else {
+    alert("❌ Could not confirm payment. Try again!");
+  }
+}
+
+function confirmPayment() {
+  // Get latest applicant
+  const keys = Object.keys(localStorage).filter(k => k.startsWith("applicant_"));
+  const latest = keys[keys.length - 1];
+  const applicant = JSON.parse(localStorage.getItem(latest));
+
+  // Update payment status to PAID
+  applicant.status = "PAID";
+  localStorage.setItem(latest, JSON.stringify(applicant));
+
+  // Update payment status text on page
+  document.getElementById("payment-status-text").innerHTML =
+    'Payment Status: <strong style="color:green;">✅ PAID</strong>';
+
+  // Hide confirm button
+  event.target.style.display = "none";
+
+  // Show admission letter button
+  document.getElementById("admission-btn").style.display = "inline-block";
+
+  alert("✅ Payment confirmed! You can now download your Admission Letter.");
+}
+
+
+function downloadAdmissionLetter() {
+  // Get latest applicant
+  const keys = Object.keys(localStorage).filter(k => k.startsWith("applicant_"));
+  const latest = keys[keys.length - 1];
+  const applicant = JSON.parse(localStorage.getItem(latest));
+
+  // Create new PDF
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF();
+
+  // ===== HEADER =====
+  doc.setFillColor(11, 31, 58);
+  doc.rect(0, 0, 210, 40, "F");
+
+  if (logoBase64) {
+    doc.addImage(logoBase64, "JPEG", 8, 6, 25, 25);
+  }
+
+  doc.setTextColor(232, 184, 75);
+doc.setFontSize(18);
+doc.setFont("helvetica", "bold");
+doc.text("HORLA OLUWA MULTIPURPOSE", 105, 15, { align: "center" });
+doc.text("INVESTMENT LIMITED", 105, 24, { align: "center" });
+
+doc.setFontSize(10);
+doc.setTextColor(255, 255, 255);
+doc.text("Computer Training & Education", 105, 33, { align: "center" });
+
+// ===== PASSPORT PHOTO =====
+if (applicant.passport) {
+  doc.addImage(applicant.passport, "JPEG", 158, 48, 38, 42);
+  doc.setDrawColor(201, 146, 42);
+  doc.setLineWidth(0.5);
+  doc.rect(158, 48, 38, 42);
+}
+
+// ===== DATE & ID =====
+doc.setFontSize(10);
+doc.setFont("helvetica", "normal");
+doc.setTextColor(100, 100, 100);
+doc.text("Date: " + applicant.date, 14, 70);
+doc.text("Application ID: " + applicant.id, 14, 78);
+
+  // ===== TITLE =====
+  doc.setTextColor(11, 31, 58);
+  doc.setFontSize(14);
+  doc.setFont("helvetica", "bold");
+  doc.text("ADMISSION LETTER", 105, 55, { align: "center" });
+
+  doc.setDrawColor(201, 146, 42);
+  doc.setLineWidth(0.8);
+  doc.line(65, 58, 145, 58);
+
+  
+  // ===== GREETING =====
+  doc.setFontSize(11);
+  doc.setFont("helvetica", "normal");
+  doc.setTextColor(11, 31, 58);
+  doc.text("Dear " + applicant.firstName + " " + applicant.lastName + ",", 14, 85);
+
+  // ===== BODY =====
+  doc.setFontSize(10);
+  doc.setFont("helvetica", "normal");
+  doc.setTextColor(50, 50, 50);
+
+  const body1 = "We are pleased to inform you that your application to HORLA OLUWA Multipurpose";
+  const body2 = "Investment Limited has been reviewed and you have been offered admission into our";
+  const body3 = "computer training program.";
+  doc.text(body1, 14, 98);
+  doc.text(body2, 14, 106);
+  doc.text(body3, 14, 114);
+
+  // ===== DETAILS BOX =====
+  doc.setFillColor(250, 246, 239);
+  doc.setDrawColor(201, 146, 42);
+  doc.setLineWidth(0.5);
+  doc.roundedRect(14, 122, 182, 55, 3, 3, "FD");
+
+  doc.setFontSize(11);
+  doc.setFont("helvetica", "bold");
+  doc.setTextColor(11, 31, 58);
+  doc.text("ENROLLMENT DETAILS", 105, 133, { align: "center" });
+
+  const enrollDetails = [
+    ["Full Name", applicant.firstName + " " + applicant.lastName],
+    ["Course Enrolled", applicant.course],
+    ["Class Schedule", applicant.schedule],
+    ["Payment Status", "PAID"],
+  ];
+
+  let y = 143;
+  doc.setFontSize(10);
+  enrollDetails.forEach(([label, value]) => {
+    doc.setFont("helvetica", "bold");
+    doc.setTextColor(100, 100, 100);
+    doc.text(label + ":", 20, y);
+    doc.setFont("helvetica", "normal");
+    doc.setTextColor(11, 31, 58);
+    if (label === "Payment Status") {
+      doc.setTextColor(0, 128, 0);
+    }
+    doc.text(value || "N/A", 80, y);
+    y += 10;
+  });
+
+  // ===== CLOSING =====
+  doc.setFontSize(10);
+  doc.setFont("helvetica", "normal");
+  doc.setTextColor(50, 50, 50);
+  doc.text("Please report to our office with this letter on your first day of class.", 14, 190);
+  doc.text("We look forward to having you and wish you a productive learning experience.", 14, 200);
+
+  // ===== SIGNATURE =====
+  doc.setFontSize(10);
+  doc.setFont("helvetica", "normal");
+  doc.setTextColor(50, 50, 50);
+  doc.text("Yours faithfully,", 14, 220);
+
+  doc.setFont("helvetica", "bold");
+  doc.setTextColor(11, 31, 58);
+  doc.text("For: HORLA OLUWA Multipurpose Investment Limited", 14, 235);
+
+  doc.setDrawColor(11, 31, 58);
+  doc.setLineWidth(0.5);
+  doc.line(14, 228, 100, 228);
+
+  doc.setFont("helvetica", "normal");
+  doc.setFontSize(9);
+  doc.setTextColor(100, 100, 100);
+  doc.text("Authorized Signatory", 14, 242);
+
+  // ===== FOOTER =====
+  doc.setFillColor(11, 31, 58);
+  doc.rect(0, 285, 210, 12, "F");
+  doc.setTextColor(232, 184, 75);
+  doc.setFontSize(8);
+  doc.text("© 2026 HORLA OLUWA Multipurpose Investment Limited", 105, 292, { align: "center" });
+
+  // ===== SAVE =====
+  doc.save("HORLA-OLUWA-Admission-Letter-" + applicant.id + ".pdf");
+}
+
+function downloadPDF() {
+  // Get applicant data from browser memory
+  const keys = Object.keys(localStorage).filter(k => k.startsWith("applicant_"));
+  const latest = keys[keys.length - 1];
+  const applicant = JSON.parse(localStorage.getItem(latest));
+
+  // Create new PDF
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF();
+
+  // ===== HEADER =====
+  doc.setFillColor(11, 31, 58); // navy
+  doc.rect(0, 0, 210, 35, "F");
+
+  // Add logo to header
+if (logoBase64) {
+  doc.addImage(logoBase64, "JPEG", 8, 4, 25, 25);
+}
+
+  doc.setTextColor(232, 184, 75); // gold
+  doc.setFontSize(16);
+  doc.setFont("helvetica", "bold");
+  doc.text("HORLA OLUWA MULTIPURPOSE", 105, 14, { align: "center" });
+  doc.text("INVESTMENT LIMITED", 105, 22, { align: "center" });
+
+  doc.setFontSize(9);
+  doc.setTextColor(255, 255, 255);
+  doc.text("Computer Training & Education", 105, 30, { align: "center" });
+
+  // ===== TITLE =====
+  doc.setTextColor(11, 31, 58);
+  doc.setFontSize(13);
+  doc.setFont("helvetica", "bold");
+  doc.text("APPLICATION FORM", 105, 48, { align: "center" });
+
+  // Underline
+  doc.setDrawColor(201, 146, 42);
+  doc.setLineWidth(0.8);
+  doc.line(70, 51, 140, 51);
+
+  // ===== APPLICATION ID BOX =====
+  doc.setFillColor(250, 246, 239);
+  doc.setDrawColor(201, 146, 42);
+  doc.setLineWidth(0.5);
+  doc.roundedRect(14, 56, 182, 14, 3, 3, "FD");
+
+  doc.setFontSize(10);
+  doc.setFont("helvetica", "bold");
+  doc.setTextColor(11, 31, 58);
+  doc.text("Application ID:", 20, 65);
+
+  doc.setTextColor(201, 146, 42);
+  doc.text(applicant.id, 60, 65);
+
+  doc.setFont("helvetica", "normal");
+  doc.setTextColor(11, 31, 58);
+  doc.text("Date: " + applicant.date, 150, 65);
+
+
+
+// ===== PASSPORT IMAGE =====
+if (applicant.passport) {
+  doc.addImage(applicant.passport, "JPEG", 150, 74, 40, 45);
+  doc.setDrawColor(201, 146, 42);
+  doc.setLineWidth(0.5);
+  doc.rect(150, 74, 40, 45);
+}
+
+  // ===== PERSONAL DETAILS =====
+  doc.setFontSize(11);
+  doc.setFont("helvetica", "bold");
+  doc.setTextColor(11, 31, 58);
+  doc.text("PERSONAL DETAILS", 14, 82);
+
+  doc.setDrawColor(201, 146, 42);
+  doc.setLineWidth(0.4);
+  doc.line(14, 84, 100, 84);
+
+  const details = [
+    ["Full Name", applicant.firstName + " " + applicant.lastName],
+    ["Email Address", applicant.email],
+    ["Phone Number", applicant.phone],
+    ["Date of Birth", applicant.dob],
+  ];
+
+  let y = 94;
+  doc.setFontSize(10);
+  details.forEach(([label, value]) => {
+    doc.setFont("helvetica", "bold");
+    doc.setTextColor(100, 100, 100);
+    doc.text(label + ":", 14, y);
+    doc.setFont("helvetica", "normal");
+    doc.setTextColor(11, 31, 58);
+    doc.text(value || "N/A", 70, y);
+    y += 10;
+  });
+
+  // ===== COURSE DETAILS =====
+  doc.setFontSize(11);
+  doc.setFont("helvetica", "bold");
+  doc.setTextColor(11, 31, 58);
+  doc.text("COURSE DETAILS", 14, y + 6);
+
+  doc.setDrawColor(201, 146, 42);
+  doc.line(14, y + 8, 100, y + 8);
+
+  y += 18;
+  const courseDetails = [
+    ["Selected Course", applicant.course],
+    ["Preferred Schedule", applicant.schedule],
+  ];
+
+  courseDetails.forEach(([label, value]) => {
+    doc.setFont("helvetica", "bold");
+    doc.setTextColor(100, 100, 100);
+    doc.text(label + ":", 14, y);
+    doc.setFont("helvetica", "normal");
+    doc.setTextColor(11, 31, 58);
+    doc.text(value || "N/A", 70, y);
+    y += 10;
+  });
+
+  // ===== PAYMENT STATUS =====
+  y += 6;
+  doc.setFillColor(255, 248, 230);
+  doc.setDrawColor(201, 146, 42);
+  doc.roundedRect(14, y, 182, 16, 3, 3, "FD");
+
+  doc.setFontSize(11);
+  doc.setFont("helvetica", "bold");
+  doc.setTextColor(11, 31, 58);
+  doc.text("Payment Status:", 20, y + 10);
+
+  doc.setTextColor(200, 100, 0);
+  doc.text("PENDING", 75, y + 10);
+
+  // ===== FOOTER =====
+  y += 30;
+  doc.setFontSize(8);
+  doc.setFont("helvetica", "normal");
+  doc.setTextColor(150, 150, 150);
+  doc.text("This document was auto-generated by HORLA OLUWA Multipurpose Investment Limited.", 105, y, { align: "center" });
+  doc.text("Please keep your Application ID safe for future reference.", 105, y + 6, { align: "center" });
+
+  // Footer bar
+  doc.setFillColor(11, 31, 58);
+  doc.rect(0, 285, 210, 12, "F");
+  doc.setTextColor(232, 184, 75);
+  doc.setFontSize(8);
+  doc.text("HORLA OLUWA Multipurpose Investment Limited © 2026", 105, 292, { align: "center" });
+
+  // ===== SAVE =====
+  doc.save("HORLA-OLUWA-Application-" + applicant.id + ".pdf");
+}
+
+
+
+</script>
+</html>

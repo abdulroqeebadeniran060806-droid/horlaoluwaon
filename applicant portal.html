@@ -1,0 +1,1117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Student Portal — HORLA OLUWA</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700;900&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <style>
+    * { margin:0; padding:0; box-sizing:border-box; }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: #FAF6EF;
+      color: #0B1F3A;
+      min-height: 100vh;
+    }
+
+    /* NAV */
+    nav {
+      background: #0B1F3A;
+      padding: 1rem 3rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .nav-logo {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      text-decoration: none;
+    }
+
+    .nav-logo img {
+      width: 40px;
+      height: 40px;
+      border-radius: 8px;
+      object-fit: cover;
+    }
+
+    .nav-logo span {
+      color: #E8B84B;
+      font-size: 1rem;
+      font-weight: bold;
+      font-family: 'Playfair Display', serif;
+    }
+
+    .nav-right a {
+      color: rgba(255,255,255,0.7);
+      text-decoration: none;
+      font-size: 0.85rem;
+      margin-left: 1.5rem;
+    }
+
+    .nav-right a:hover { color: #E8B84B; }
+
+    /* LOGIN PAGE */
+    #login-page {
+      min-height: calc(100vh - 65px);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem;
+      background: #0B1F3A;
+      position: relative;
+      overflow: hidden;
+    }
+
+    #login-page::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(201,146,42,0.06) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(201,146,42,0.06) 1px, transparent 1px);
+      background-size: 50px 50px;
+    }
+
+    .login-card {
+      background: white;
+      border-radius: 20px;
+      padding: 3rem;
+      width: 100%;
+      max-width: 420px;
+      position: relative;
+      z-index: 2;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+    }
+
+    .login-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: #FAF6EF;
+      border: 1px solid rgba(201,146,42,0.3);
+      color: #C9922A;
+      padding: 0.4rem 1rem;
+      border-radius: 100px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      margin-bottom: 1rem;
+    }
+
+    .login-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.8rem;
+      font-weight: 700;
+      color: #0B1F3A;
+      margin-bottom: 0.4rem;
+    }
+
+    .login-subtitle {
+      color: #6B7280;
+      font-size: 0.85rem;
+      margin-bottom: 2rem;
+    }
+
+    .form-label {
+      display: block;
+      font-size: 0.78rem;
+      font-weight: 600;
+      color: #0B1F3A;
+      margin-bottom: 0.4rem;
+      letter-spacing: 0.03em;
+      text-transform: uppercase;
+    }
+
+    .form-input {
+      width: 100%;
+      padding: 0.8rem 1rem;
+      margin-bottom: 1.25rem;
+      border: 1.5px solid rgba(0,0,0,0.1);
+      border-radius: 8px;
+      font-size: 0.9rem;
+      font-family: 'DM Sans', sans-serif;
+      background: #FAF6EF;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+
+    .form-input:focus {
+      border-color: #C9922A;
+      background: white;
+    }
+
+    .login-btn {
+      width: 100%;
+      padding: 1rem;
+      background: linear-gradient(135deg, #C9922A, #E8B84B);
+      color: #0B1F3A;
+      border: none;
+      border-radius: 10px;
+      font-size: 1rem;
+      font-weight: 700;
+      cursor: pointer;
+      font-family: 'DM Sans', sans-serif;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+    .login-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(201,146,42,0.35);
+    }
+
+    .login-error {
+      display: none;
+      background: #fff0f0;
+      border: 1px solid #ffcccc;
+      color: #cc0000;
+      padding: 0.75rem 1rem;
+      border-radius: 8px;
+      font-size: 0.85rem;
+      margin-top: 1rem;
+      text-align: center;
+    }
+
+    .back-link {
+      display: block;
+      text-align: center;
+      margin-top: 1.5rem;
+      color: #6B7280;
+      font-size: 0.85rem;
+      text-decoration: none;
+      cursor: pointer;
+    }
+
+    .back-link:hover { color: #C9922A; }
+
+    /* DASHBOARD */
+    #dashboard-page {
+      display: none;
+      padding: 3rem 2rem;
+      max-width: 800px;
+      margin: 0 auto;
+    }
+
+    .dashboard-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 2rem;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+
+    .dashboard-header h2 {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.8rem;
+      color: #0B1F3A;
+    }
+
+    .dashboard-header p {
+      color: #6B7280;
+      font-size: 0.85rem;
+    }
+
+    .logout-btn {
+      padding: 0.6rem 1.5rem;
+      background: #0B1F3A;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 0.85rem;
+      font-weight: bold;
+      cursor: pointer;
+      font-family: 'DM Sans', sans-serif;
+    }
+
+    .logout-btn:hover { background: #C9922A; color: #0B1F3A; }
+
+    .status-card {
+      background: white;
+      border-radius: 16px;
+      padding: 2rem;
+      margin-bottom: 1.5rem;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.06);
+    }
+
+    .status-card h3 {
+      font-family: 'Playfair Display', serif;
+      color: #C9922A;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      margin-bottom: 1.25rem;
+      font-size: 0.8rem;
+    }
+
+    .info-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0.6rem 0;
+      border-bottom: 1px solid rgba(0,0,0,0.05);
+      font-size: 0.9rem;
+    }
+
+    .info-row:last-child { border-bottom: none; }
+
+    .info-label { color: #6B7280; }
+    .info-value { color: #0B1F3A; font-weight: 600; }
+
+    .status-paid {
+      background: #e6f9e6;
+      color: green;
+      padding: 0.3rem 0.75rem;
+      border-radius: 100px;
+      font-size: 0.8rem;
+      font-weight: bold;
+    }
+
+    .status-pending {
+      background: #fff8e6;
+      color: orange;
+      padding: 0.3rem 0.75rem;
+      border-radius: 100px;
+      font-size: 0.8rem;
+      font-weight: bold;
+    }
+
+    .action-buttons {
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+    }
+
+    .action-btn {
+      width: 100%;
+      padding: 1rem;
+      border: none;
+      border-radius: 10px;
+      font-size: 0.95rem;
+      font-weight: bold;
+      cursor: pointer;
+      font-family: 'DM Sans', sans-serif;
+      transition: transform 0.2s;
+    }
+
+    .action-btn:hover { transform: translateY(-2px); }
+
+    .btn-dark { background: #0B1F3A; color: white; }
+    .btn-gold { background: linear-gradient(135deg, #C9922A, #E8B84B); color: #0B1F3A; }
+    .btn-disabled { background: #e5e7eb; color: #9ca3af; cursor: not-allowed; }
+    .btn-disabled:hover { transform: none; }
+
+    @media (max-width: 768px) {
+      nav { padding: 1rem; }
+      .login-card { padding: 2rem 1.5rem; }
+      #dashboard-page { padding: 2rem 1rem; }
+    }
+  
+  /* ===== DIAGONAL STRIPES BACKGROUND ===== */
+  body {
+    background-color: #FAF6EF;
+    background-image: repeating-linear-gradient(
+      45deg,
+      transparent,
+      transparent 20px,
+      rgba(201, 146, 42, 0.04) 20px,
+      rgba(201, 146, 42, 0.04) 21px
+    );
+  }
+
+  #login-page {
+    background: #0B1F3A;
+    background-image: repeating-linear-gradient(
+      45deg,
+      transparent,
+      transparent 30px,
+      rgba(201, 146, 42, 0.04) 30px,
+      rgba(201, 146, 42, 0.04) 31px
+    );
+  }
+
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a href="HORLA OLUWA APPLICATION FORM.html" class="nav-logo">
+    <img src="In-print Horla Oluwa.jpg" alt="HORLA OLUWA Logo" />
+    <span>HORLA OLUWA</span>
+  </a>
+  <div class="nav-right">
+    <a href="HORLA OLUWA APPLICATION FORM.html">← Back to Website</a>
+    <a href="HORLA OLUWA APPLICATION FORM.html#apply">Apply Now</a>
+  </div>
+</nav>
+
+<!-- LOGIN PAGE -->
+<div id="login-page">
+
+  <!-- Login Card -->
+  <div class="login-card">
+    <div class="login-badge">🎓 Student Portal</div>
+    <h2 class="login-title">Welcome Back!</h2>
+    <p class="login-subtitle">Login with your Application ID and portal password</p>
+
+    <label class="form-label">Application ID</label>
+    <input type="text" id="portal-id" class="form-input" placeholder="e.g. HORLA-2026-0001"/>
+
+    <label class="form-label">Portal Password</label>
+    <input type="password" id="portal-pass" class="form-input" placeholder="Enter your password"/>
+
+    <button class="login-btn" onclick="portalLogin()">
+      Login to My Portal →
+    </button>
+
+    <div class="login-error" id="portal-error">
+      ❌ Incorrect Application ID or password. Please try again.
+    </div>
+
+    <a onclick="showForgotPassword()" class="back-link">
+      Forgot Password? Reset it here →
+    </a>
+
+    <a href="HORLA OLUWA APPLICATION FORM.html#apply" class="back-link">
+      Don't have an account? Apply Now →
+    </a>
+  </div>
+
+  <!-- Forgot Password Card -->
+  <div id="forgot-password-card" style="
+    display:none;
+    background:white;
+    border-radius:20px;
+    padding:3rem;
+    width:100%;
+    max-width:420px;
+    position:relative;
+    z-index:2;
+    box-shadow:0 20px 60px rgba(0,0,0,0.3);
+  ">
+    <div class="login-badge">🔒 Reset Password</div>
+    <h2 class="login-title">Forgot Password?</h2>
+    <p class="login-subtitle">Enter your Application ID and email to reset your password</p>
+
+    <label class="form-label">Application ID</label>
+    <input type="text" id="reset-app-id" class="form-input" placeholder="e.g. HORLA-2026-0001"/>
+
+    <label class="form-label">Email Address</label>
+    <input type="email" id="reset-email" class="form-input" placeholder="Enter your email"/>
+
+    <label class="form-label">New Password</label>
+    <input type="password" id="reset-new-password" class="form-input" placeholder="Enter new password"/>
+
+    <label class="form-label">Confirm New Password</label>
+    <input type="password" id="reset-confirm-password" class="form-input" placeholder="Confirm new password"/>
+
+    <button class="login-btn" onclick="resetPassword()">
+      Reset Password →
+    </button>
+
+    <p id="reset-msg" style="display:none; font-size:0.85rem; margin-top:1rem; text-align:center;"></p>
+
+    <a onclick="showLoginCard()" class="back-link">
+      ← Back to Login
+    </a>
+  </div>
+
+</div>
+
+<!-- DASHBOARD -->
+<div id="dashboard-page">
+
+  <div class="dashboard-header">
+    <div>
+      <h2>My Dashboard</h2>
+      <p id="welcome-text">Welcome back!</p>
+    </div>
+    <button class="logout-btn" onclick="portalLogout()">Logout</button>
+  </div>
+
+  <!-- Personal Details -->
+  <div class="status-card">
+    <h3>Personal Details</h3>
+    <div class="info-row">
+      <span class="info-label">Full Name</span>
+      <span class="info-value" id="p-name"></span>
+    </div>
+    <div class="info-row">
+      <span class="info-label">Email Address</span>
+      <span class="info-value" id="p-email"></span>
+    </div>
+    <div class="info-row">
+      <span class="info-label">Phone Number</span>
+      <span class="info-value" id="p-phone"></span>
+    </div>
+    <div class="info-row">
+      <span class="info-label">Date of Birth</span>
+      <span class="info-value" id="p-dob"></span>
+    </div>
+  </div>
+
+  <!-- Enrollment Details -->
+  <div class="status-card">
+    <h3>Enrollment Details</h3>
+    <div class="info-row">
+      <span class="info-label">Application ID</span>
+      <span class="info-value" id="p-id" style="color:#C9922A;"></span>
+    </div>
+    <div class="info-row">
+      <span class="info-label">Course</span>
+      <span class="info-value" id="p-course"></span>
+    </div>
+    <div class="info-row">
+      <span class="info-label">Schedule</span>
+      <span class="info-value" id="p-schedule"></span>
+    </div>
+    <div class="info-row">
+      <span class="info-label">Date Applied</span>
+      <span class="info-value" id="p-date"></span>
+    </div>
+    <div class="info-row">
+      <span class="info-label">Payment Status</span>
+      <span id="p-status"></span>
+    </div>
+  </div>
+
+  <!-- Payment Instructions -->
+  <div class="status-card" id="payment-instructions">
+    <h3>Payment Instructions</h3>
+
+    <p style="color:#6B7280; font-size:0.85rem; margin-bottom:1.25rem; line-height:1.6;">
+      To complete your enrollment, make a bank transfer to the account below and send your receipt to us via WhatsApp or email.
+    </p>
+
+    <div style="background:#FAF6EF; border-radius:10px; padding:1rem 1.25rem; margin-bottom:1rem;">
+      <div style="display:flex; justify-content:space-between; padding:0.5rem 0; border-bottom:1px solid rgba(0,0,0,0.06);">
+        <span style="color:#6B7280; font-size:0.85rem;">Bank Name</span>
+        <span style="color:#0B1F3A; font-weight:bold; font-size:0.85rem;">Opay</span>
+      </div>
+      <div style="display:flex; justify-content:space-between; padding:0.5rem 0; border-bottom:1px solid rgba(0,0,0,0.06);">
+        <span style="color:#6B7280; font-size:0.85rem;">Account Name</span>
+        <span style="color:#0B1F3A; font-weight:bold; font-size:0.85rem;">Adeniran Bashir A.</span>
+      </div>
+      <div style="display:flex; justify-content:space-between; align-items:center; padding:0.5rem 0;">
+        <span style="color:#6B7280; font-size:0.85rem;">Account Number</span>
+        <div style="display:flex; align-items:center; gap:0.5rem;">
+          <span id="portal-acct-num" style="color:#0B1F3A; font-weight:bold; font-size:0.85rem;">8052505041</span>
+          <button onclick="copyPortalAccountNumber()" style="background:#0B1F3A; color:white; border:none; border-radius:4px; padding:0.2rem 0.5rem; font-size:0.7rem; cursor:pointer;">Copy</button>
+        </div>
+      </div>
+    </div>
+
+    <div style="background:#FAF6EF; border-radius:10px; padding:1rem 1.25rem; margin-bottom:1rem;">
+      <div style="display:flex; justify-content:space-between; padding:0.5rem 0; border-bottom:1px solid rgba(0,0,0,0.06);">
+        <span style="color:#6B7280; font-size:0.85rem;">Amount to Pay</span>
+        <span id="portal-payment-amount" style="color:#C9922A; font-weight:bold; font-size:0.85rem;"></span>
+      </div>
+      <div style="display:flex; justify-content:space-between; padding:0.5rem 0;">
+        <span style="color:#6B7280; font-size:0.85rem;">Payment Reference</span>
+        <span id="portal-payment-reference" style="color:#0B1F3A; font-weight:bold; font-size:0.85rem;"></span>
+      </div>
+    </div>
+
+    <p style="color:#6B7280; font-size:0.78rem; line-height:1.6; margin-bottom:1rem;">
+      ⚠️ Use your <strong>Application ID</strong> as payment reference. After payment send your receipt to:
+    </p>
+
+    <div style="display:flex; flex-direction:column; gap:0.5rem;">
+      <a href="https://wa.me/2349050123981" target="_blank" style="display:flex; align-items:center; gap:0.5rem; background:#25D366; color:white; padding:0.6rem 1rem; border-radius:8px; text-decoration:none; font-size:0.85rem; font-weight:bold; justify-content:center;">
+        💬 Send Receipt on WhatsApp
+      </a>
+      <a href="/cdn-cgi/l/email-protection#ceafacaabba2bca1bfababacafaaaba0a7bcafa0fef8fef6fef88ea9a3afa7a2e0ada1a3" style="display:flex; align-items:center; gap:0.5rem; background:#FAF6EF; color:#0B1F3A; padding:0.6rem 1rem; border-radius:8px; text-decoration:none; font-size:0.85rem; font-weight:bold; justify-content:center; border:1px solid rgba(0,0,0,0.1);">
+        📧 Send Receipt via Email
+      </a>
+    </div>
+  </div>
+
+  <!-- My Documents -->
+  <div class="status-card">
+    <h3>My Documents</h3>
+    <div class="action-buttons">
+      <button class="action-btn btn-dark" onclick="portalDownloadPDF()">
+        📄 Download Application PDF
+      </button>
+      <button class="action-btn" id="portal-admission-btn" onclick="portalDownloadAdmission()">
+        🎓 Download Admission Letter
+      </button>
+
+      <button class="action-btn" id="portal-receipt-btn" onclick="portalDownloadReceipt()" style="none">
+        🧾 Download Payment Receipt   
+      </button>
+    </div>
+  </div>
+
+  <!-- Change Password -->
+  <div class="status-card">
+    <h3>Change Portal Password</h3>
+
+    <input type="password" id="old-password" class="form-input" placeholder="Current Password" style="margin-bottom:1rem;"/>
+    <input type="password" id="new-password" class="form-input" placeholder="New Password" style="margin-bottom:1rem;"/>
+    <input type="password" id="confirm-new-password" class="form-input" placeholder="Confirm New Password" style="margin-bottom:1rem;"/>
+
+    <button onclick="changePortalPassword()" class="action-btn btn-dark">
+      🔒 Change Password
+    </button>
+
+    <p id="password-change-msg" style="display:none; font-size:0.85rem; margin-top:1rem; text-align:center;"></p>
+  </div>
+
+</div>
+
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+  let portalApplicant = null;
+  let logoBase64 = null;
+
+  window.onload = function() {
+    const img = new Image();
+    img.crossOrigin = "anonymous";
+    img.onload = function() {
+      const canvas = document.createElement("canvas");
+      canvas.width = img.width;
+      canvas.height = img.height;
+      const ctx = canvas.getContext("2d");
+      ctx.drawImage(img, 0, 0);
+      logoBase64 = canvas.toDataURL("image/jpeg");
+    };
+    img.src = "In-print Horla Oluwa.jpg";
+  }
+
+  function showForgotPassword() {
+    document.querySelector(".login-card").style.display = "none";
+    document.getElementById("forgot-password-card").style.display = "block";
+  }
+
+  function showLoginCard() {
+    document.querySelector(".login-card").style.display = "block";
+    document.getElementById("forgot-password-card").style.display = "none";
+  }
+
+  function portalLogin() {
+    const inputID = document.getElementById("portal-id").value.trim().toUpperCase();
+    const inputPass = document.getElementById("portal-pass").value;
+
+    document.getElementById("portal-error").style.display = "none";
+
+    const key = "applicant_" + inputID;
+    const data = localStorage.getItem(key);
+
+    if (!data) {
+      document.getElementById("portal-error").style.display = "block";
+      return;
+    }
+
+    const applicant = JSON.parse(data);
+
+    if (applicant.password !== inputPass) {
+      document.getElementById("portal-error").style.display = "block";
+      return;
+    }
+
+    portalApplicant = applicant;
+    loadDashboard(applicant);
+  }
+
+  function loadDashboard(applicant) {
+    document.getElementById("login-page").style.display = "none";
+    document.getElementById("dashboard-page").style.display = "block";
+
+    document.getElementById("welcome-text").textContent = "Welcome back, " + applicant.firstName + "!";
+    document.getElementById("p-name").textContent = applicant.firstName + " " + applicant.lastName;
+    document.getElementById("p-email").textContent = applicant.email;
+    document.getElementById("p-phone").textContent = applicant.phone;
+    document.getElementById("p-dob").textContent = applicant.dob;
+    document.getElementById("p-id").textContent = applicant.id;
+    document.getElementById("p-course").textContent = applicant.course;
+    document.getElementById("p-schedule").textContent = applicant.schedule;
+    document.getElementById("p-date").textContent = applicant.date;
+
+    const courseAmounts = {
+      "Basic Computer Skills": "₦30,000",
+      "Microsoft Office Suite Package Only": "₦40,000",
+      "Both the Basic & Microsoft Office Suite Package": "₦70,000",
+      "Programming & Coding": "₦100,000",
+      "Digital Literacy & Internet": "₦15,000",
+      "Full Package for all": "₦150,000",
+    };
+
+    document.getElementById("portal-payment-amount").textContent = courseAmounts[applicant.course] || "Contact us";
+    document.getElementById("portal-payment-reference").textContent = applicant.id;
+
+    if (applicant.status === "PAID") {
+      document.getElementById("payment-instructions").style.display = "none";
+    } else {
+      document.getElementById("payment-instructions").style.display = "block";
+    }
+
+    const statusEl = document.getElementById("p-status");
+    const admissionBtn = document.getElementById("portal-admission-btn");
+
+    if (applicant.status === "PAID") {
+      statusEl.innerHTML = '<span class="status-paid">✅ PAID</span>';
+      admissionBtn.className = "action-btn btn-gold";
+      document.getElementById("portal-receipt-btn").style.display = "block";
+    } else {
+      statusEl.innerHTML = '<span class="status-pending">⏳ PENDING</span>';
+      admissionBtn.className = "action-btn btn-disabled";
+      admissionBtn.onclick = function() {
+        alert("⏳ Your payment is still pending. Please complete your payment to download your admission letter.");
+      };
+    }
+  }
+
+  function portalLogout() {
+    portalApplicant = null;
+    document.getElementById("login-page").style.display = "flex";
+    document.getElementById("dashboard-page").style.display = "none";
+    document.getElementById("portal-id").value = "";
+    document.getElementById("portal-pass").value = "";
+  }
+
+  function copyPortalAccountNumber() {
+    const acctNum = document.getElementById("portal-acct-num").textContent;
+    navigator.clipboard.writeText(acctNum);
+    alert("✅ Account number copied!");
+  }
+
+  function changePortalPassword() {
+    const oldPassword = document.getElementById("old-password").value;
+    const newPassword = document.getElementById("new-password").value;
+    const confirmNewPassword = document.getElementById("confirm-new-password").value;
+    const msg = document.getElementById("password-change-msg");
+
+    if (oldPassword !== portalApplicant.password) {
+      msg.style.display = "block";
+      msg.style.color = "red";
+      msg.textContent = "❌ Current password is incorrect!";
+      return;
+    }
+
+    if (newPassword === "") {
+      msg.style.display = "block";
+      msg.style.color = "red";
+      msg.textContent = "❌ New password cannot be empty!";
+      return;
+    }
+
+    if (newPassword !== confirmNewPassword) {
+      msg.style.display = "block";
+      msg.style.color = "red";
+      msg.textContent = "❌ New passwords do not match!";
+      return;
+    }
+
+    portalApplicant.password = newPassword;
+    const key = "applicant_" + portalApplicant.id;
+    localStorage.setItem(key, JSON.stringify(portalApplicant));
+
+    document.getElementById("old-password").value = "";
+    document.getElementById("new-password").value = "";
+    document.getElementById("confirm-new-password").value = "";
+
+    msg.style.display = "block";
+    msg.style.color = "green";
+    msg.textContent = "✅ Password changed successfully!";
+  }
+
+  function resetPassword() {
+    const appID = document.getElementById("reset-app-id").value.trim().toUpperCase();
+    const email = document.getElementById("reset-email").value.trim().toLowerCase();
+    const newPassword = document.getElementById("reset-new-password").value;
+    const confirmPassword = document.getElementById("reset-confirm-password").value;
+    const msg = document.getElementById("reset-msg");
+
+    const key = "applicant_" + appID;
+    const data = localStorage.getItem(key);
+
+    if (!data) {
+      msg.style.display = "block";
+      msg.style.color = "red";
+      msg.textContent = "❌ Application ID not found!";
+      return;
+    }
+
+    const applicant = JSON.parse(data);
+
+    if (applicant.email.toLowerCase() !== email) {
+      msg.style.display = "block";
+      msg.style.color = "red";
+      msg.textContent = "❌ Email does not match our records!";
+      return;
+    }
+
+    if (newPassword === "") {
+      msg.style.display = "block";
+      msg.style.color = "red";
+      msg.textContent = "❌ New password cannot be empty!";
+      return;
+    }
+
+    if (newPassword !== confirmPassword) {
+      msg.style.display = "block";
+      msg.style.color = "red";
+      msg.textContent = "❌ Passwords do not match!";
+      return;
+    }
+
+    applicant.password = newPassword;
+    localStorage.setItem(key, JSON.stringify(applicant));
+
+    msg.style.display = "block";
+    msg.style.color = "green";
+    msg.textContent = "✅ Password reset successfully! You can now login.";
+
+    document.getElementById("reset-app-id").value = "";
+    document.getElementById("reset-email").value = "";
+    document.getElementById("reset-new-password").value = "";
+    document.getElementById("reset-confirm-password").value = "";
+  }
+
+  function portalDownloadPDF() {
+    if (!portalApplicant) return;
+    const applicant = portalApplicant;
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF();
+
+    doc.setFillColor(11, 31, 58);
+    doc.rect(0, 0, 210, 40, "F");
+    if (logoBase64) { doc.addImage(logoBase64, "JPEG", 8, 6, 25, 25); }
+    doc.setTextColor(232, 184, 75);
+    doc.setFontSize(18);
+    doc.setFont("helvetica", "bold");
+    doc.text("HORLA OLUWA MULTIPURPOSE", 105, 15, { align: "center" });
+    doc.text("INVESTMENT LIMITED", 105, 24, { align: "center" });
+    doc.setFontSize(10);
+    doc.setTextColor(255, 255, 255);
+    doc.text("Computer Training & Education", 105, 33, { align: "center" });
+    doc.setTextColor(11, 31, 58);
+    doc.setFontSize(13);
+    doc.setFont("helvetica", "bold");
+    doc.text("APPLICATION FORM", 105, 53, { align: "center" });
+    doc.setDrawColor(201, 146, 42);
+    doc.setLineWidth(0.8);
+    doc.line(70, 56, 140, 56);
+    if (applicant.passport) {
+      doc.addImage(applicant.passport, "JPEG", 158, 44, 38, 42);
+      doc.setDrawColor(201, 146, 42);
+      doc.rect(158, 44, 38, 42);
+    }
+    doc.setFillColor(250, 246, 239);
+    doc.setDrawColor(201, 146, 42);
+    doc.roundedRect(14, 62, 135, 14, 3, 3, "FD");
+    doc.setFontSize(10);
+    doc.setFont("helvetica", "bold");
+    doc.setTextColor(11, 31, 58);
+    doc.text("Application ID:", 20, 71);
+    doc.setTextColor(201, 146, 42);
+    doc.text(applicant.id, 60, 71);
+    doc.setFont("helvetica", "normal");
+    doc.setTextColor(11, 31, 58);
+    doc.text("Date: " + applicant.date, 20, 83);
+    doc.setFontSize(11);
+    doc.setFont("helvetica", "bold");
+    doc.text("PERSONAL DETAILS", 14, 96);
+    doc.setDrawColor(201, 146, 42);
+    doc.setLineWidth(0.4);
+    doc.line(14, 98, 100, 98);
+    const details = [
+      ["Full Name", applicant.firstName + " " + applicant.lastName],
+      ["Email Address", applicant.email],
+      ["Phone Number", applicant.phone],
+      ["Date of Birth", applicant.dob],
+    ];
+    let y = 108;
+    details.forEach(([label, value]) => {
+      doc.setFont("helvetica", "bold");
+      doc.setTextColor(100, 100, 100);
+      doc.text(label + ":", 14, y);
+      doc.setFont("helvetica", "normal");
+      doc.setTextColor(11, 31, 58);
+      doc.text(value || "N/A", 70, y);
+      y += 10;
+    });
+    doc.setFontSize(11);
+    doc.setFont("helvetica", "bold");
+    doc.setTextColor(11, 31, 58);
+    doc.text("COURSE DETAILS", 14, y + 6);
+    doc.setDrawColor(201, 146, 42);
+    doc.line(14, y + 8, 100, y + 8);
+    y += 18;
+    const courseDetails = [
+      ["Selected Course", applicant.course],
+      ["Preferred Schedule", applicant.schedule],
+    ];
+    courseDetails.forEach(([label, value]) => {
+      doc.setFont("helvetica", "bold");
+      doc.setTextColor(100, 100, 100);
+      doc.text(label + ":", 14, y);
+      doc.setFont("helvetica", "normal");
+      doc.setTextColor(11, 31, 58);
+      doc.text(value || "N/A", 70, y);
+      y += 10;
+    });
+    y += 6;
+    doc.setFillColor(255, 248, 230);
+    doc.setDrawColor(201, 146, 42);
+    doc.roundedRect(14, y, 182, 16, 3, 3, "FD");
+    doc.setFontSize(11);
+    doc.setFont("helvetica", "bold");
+    doc.setTextColor(11, 31, 58);
+    doc.text("Payment Status:", 20, y + 10);
+    if (applicant.status === "PAID") {
+      doc.setTextColor(0, 128, 0);
+      doc.text("PAID", 75, y + 10);
+    } else {
+      doc.setTextColor(200, 100, 0);
+      doc.text("PENDING", 75, y + 10);
+    }
+    doc.setFillColor(11, 31, 58);
+    doc.rect(0, 285, 210, 12, "F");
+    doc.setTextColor(232, 184, 75);
+    doc.setFontSize(8);
+    doc.text("HORLA OLUWA Multipurpose Investment Limited © 2026", 105, 292, { align: "center" });
+    doc.save("HORLA-OLUWA-Application-" + applicant.id + ".pdf");
+  }
+
+function portalDownloadReceipt() {
+  if (!portalApplicant) return;
+  const applicant = portalApplicant;
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF();
+
+  // Receipt number
+  const receiptNo = "RCPT-" + applicant.id;
+
+  // ===== HEADER =====
+  doc.setFillColor(11, 31, 58);
+  doc.rect(0, 0, 210, 40, "F");
+
+  if (logoBase64) {
+    doc.addImage(logoBase64, "JPEG", 8, 6, 25, 25);
+  }
+
+  doc.setTextColor(232, 184, 75);
+  doc.setFontSize(18);
+  doc.setFont("helvetica", "bold");
+  doc.text("HORLA OLUWA MULTIPURPOSE", 105, 15, { align: "center" });
+  doc.text("INVESTMENT LIMITED", 105, 24, { align: "center" });
+  doc.setFontSize(10);
+  doc.setTextColor(255, 255, 255);
+  doc.text("Computer Training & Education", 105, 33, { align: "center" });
+
+  // ===== TITLE =====
+  doc.setTextColor(11, 31, 58);
+  doc.setFontSize(14);
+  doc.setFont("helvetica", "bold");
+  doc.text("OFFICIAL FEE RECEIPT", 105, 55, { align: "center" });
+  doc.setDrawColor(201, 146, 42);
+  doc.setLineWidth(0.8);
+  doc.line(60, 58, 150, 58);
+
+  // ===== RECEIPT & DATE =====
+  doc.setFontSize(10);
+  doc.setFont("helvetica", "normal");
+  doc.setTextColor(100, 100, 100);
+  doc.text("Receipt No: " + receiptNo, 14, 70);
+  doc.text("Date: " + applicant.date, 150, 70);
+
+  // ===== PASSPORT =====
+  if (applicant.passport) {
+    doc.addImage(applicant.passport, "JPEG", 158, 48, 38, 42);
+    doc.setDrawColor(201, 146, 42);
+    doc.rect(158, 48, 38, 42);
+  }
+
+  // ===== RECEIVED FROM =====
+  doc.setFontSize(11);
+  doc.setFont("helvetica", "normal");
+  doc.setTextColor(11, 31, 58);
+  doc.text("Received from:", 14, 85);
+  doc.setFont("helvetica", "bold");
+  doc.text(applicant.firstName + " " + applicant.lastName, 60, 85);
+
+  // ===== DETAILS BOX =====
+  doc.setFillColor(250, 246, 239);
+  doc.setDrawColor(201, 146, 42);
+  doc.setLineWidth(0.5);
+  doc.roundedRect(14, 95, 182, 70, 3, 3, "FD");
+
+  doc.setFontSize(11);
+  doc.setFont("helvetica", "bold");
+  doc.setTextColor(11, 31, 58);
+  doc.text("PAYMENT DETAILS", 105, 106, { align: "center" });
+
+  const paymentDetails = [
+    ["Application ID", applicant.id],
+    ["Student Name", applicant.firstName + " " + applicant.lastName],
+    ["Email Address", applicant.email],
+    ["Course Enrolled", applicant.course],
+    ["Class Schedule", applicant.schedule],
+  ];
+
+  const courseAmounts = {
+    " Basic Computer Skills": "₦30,000",
+    " Microsoft Office Suite Package Only": "₦40,000",
+    " Both the Basic & Microsoft Office Suite Package": "₦70,000",
+    " Programming & Coding": "₦100,000",
+    " Digital Literacy & Internet": "₦15,000",
+    " Full Package for all": "₦150,000",
+  };
+
+  let y = 116;
+  doc.setFontSize(10);
+  paymentDetails.forEach(([label, value]) => {
+    doc.setFont("helvetica", "bold");
+    doc.setTextColor(100, 100, 100);
+    doc.text(label + ":", 20, y);
+    doc.setFont("helvetica", "normal");
+    doc.setTextColor(11, 31, 58);
+    doc.text(value || "N/A", 80, y);
+    y += 10;
+  });
+
+  // ===== AMOUNT =====
+  const amount = courseAmounts[applicant.course] || "Contact us";
+  doc.setFillColor(11, 31, 58);
+  doc.roundedRect(14, 172, 182, 20, 3, 3, "F");
+  doc.setFontSize(12);
+  doc.setFont("helvetica", "bold");
+  doc.setTextColor(232, 184, 75);
+  doc.text("Amount Paid:", 20, 185);
+  doc.setFontSize(14);
+  doc.text(amount, 160, 185, { align: "right" });
+
+  // ===== PAID STAMP =====
+  doc.setDrawColor(0, 128, 0);
+  doc.setLineWidth(2);
+  doc.roundedRect(130, 200, 60, 22, 3, 3);
+  doc.setFontSize(16);
+  doc.setFont("helvetica", "bold");
+  doc.setTextColor(0, 128, 0);
+  doc.text("PAID", 160, 215, { align: "center" });
+
+  // ===== SIGNATURE =====
+  doc.setFontSize(10);
+  doc.setFont("helvetica", "normal");
+  doc.setTextColor(50, 50, 50);
+  doc.text("Authorized by:", 14, 215);
+  doc.setDrawColor(11, 31, 58);
+  doc.setLineWidth(0.5);
+  doc.line(14, 228, 100, 228);
+  doc.setFont("helvetica", "bold");
+  doc.setTextColor(11, 31, 58);
+  doc.text("HORLA OLUWA Multipurpose Investment Limited", 14, 235);
+  doc.setFont("helvetica", "normal");
+  doc.setFontSize(9);
+  doc.setTextColor(100, 100, 100);
+  doc.text("Authorized Signatory", 14, 242);
+
+  // ===== NOTE =====
+  doc.setFontSize(8);
+  doc.setTextColor(150, 150, 150);
+  doc.text("This is an official receipt. Please keep it safe for future reference.", 105, 255, { align: "center" });
+
+  // ===== FOOTER =====
+  doc.setFillColor(11, 31, 58);
+  doc.rect(0, 285, 210, 12, "F");
+  doc.setTextColor(232, 184, 75);
+  doc.setFontSize(8);
+  doc.text("HORLA OLUWA Multipurpose Investment Limited © 2026", 105, 292, { align: "center" });
+
+  doc.save("HORLA-OLUWA-Receipt-" + applicant.id + ".pdf");
+}
+
+  function portalDownloadAdmission() {
+    if (!portalApplicant) return;
+    const applicant = portalApplicant;
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF();
+
+    doc.setFillColor(11, 31, 58);
+    doc.rect(0, 0, 210, 40, "F");
+    if (logoBase64) { doc.addImage(logoBase64, "JPEG", 8, 6, 25, 25); }
+    doc.setTextColor(232, 184, 75);
+    doc.setFontSize(18);
+    doc.setFont("helvetica", "bold");
+    doc.text("HORLA OLUWA MULTIPURPOSE", 105, 15, { align: "center" });
+    doc.text("INVESTMENT LIMITED", 105, 24, { align: "center" });
+    doc.setFontSize(10);
+    doc.setTextColor(255, 255, 255);
+    doc.text("Computer Training & Education", 105, 33, { align: "center" });
+    doc.setTextColor(11, 31, 58);
+    doc.setFontSize(14);
+    doc.setFont("helvetica", "bold");
+    doc.text("ADMISSION LETTER", 105, 55, { align: "center" });
+    doc.setDrawColor(201, 146, 42);
+    doc.setLineWidth(0.8);
+    doc.line(65, 58, 145, 58);
+    if (applicant.passport) {
+      doc.addImage(applicant.passport, "JPEG", 158, 48, 38, 42);
+      doc.setDrawColor(201, 146, 42);
+      doc.rect(158, 48, 38, 42);
+    }
+    doc.setFontSize(10);
+    doc.setFont("helvetica", "normal");
+    doc.setTextColor(100, 100, 100);
+    doc.text("Date: " + applicant.date, 14, 70);
+    doc.text("Application ID: " + applicant.id, 14, 78);
+    doc.setFontSize(11);
+    doc.setFont("helvetica", "normal");
+    doc.setTextColor(11, 31, 58);
+    doc.text("Dear " + applicant.firstName + " " + applicant.lastName + ",", 14, 100);
+    doc.setFontSize(10);
+    doc.setTextColor(50, 50, 50);
+    doc.text("We are pleased to inform you that your application to HORLA OLUWA Multipurpose", 14, 113);
+    doc.text("Investment Limited has been reviewed and you have been offered admission into our", 14, 121);
+    doc.text("computer training program.", 14, 129);
+    doc.setFillColor(250, 246, 239);
+    doc.setDrawColor(201, 146, 42);
+    doc.roundedRect(14, 137, 182, 55, 3, 3, "FD");
+    doc.setFontSize(11);
+    doc.setFont("helvetica", "bold");
+    doc.setTextColor(11, 31, 58);
+    doc.text("ENROLLMENT DETAILS", 105, 148, { align: "center" });
+    const enrollDetails = [
+      ["Full Name", applicant.firstName + " " + applicant.lastName],
+      ["Course Enrolled", applicant.course],
+      ["Class Schedule", applicant.schedule],
+      ["Payment Status", "PAID"],
+    ];
+    let y = 158;
+    enrollDetails.forEach(([label, value]) => {
+      doc.setFont("helvetica", "bold");
+      doc.setTextColor(100, 100, 100);
+      doc.text(label + ":", 20, y);
+      doc.setFont("helvetica", "normal");
+      doc.setTextColor(label === "Payment Status" ? 0 : 11, label === "Payment Status" ? 128 : 31, label === "Payment Status" ? 0 : 58);
+      doc.text(value || "N/A", 80, y);
+      y += 10;
+    });
+    doc.setFontSize(10);
+    doc.setFont("helvetica", "normal");
+    doc.setTextColor(50, 50, 50);
+    doc.text("Please report to our office with this letter on your first day of class.", 14, 205);
+    doc.text("We look forward to having you and wish you a productive learning experience.", 14, 215);
+    doc.text("Yours faithfully,", 14, 232);
+    doc.setDrawColor(11, 31, 58);
+    doc.setLineWidth(0.5);
+    doc.line(14, 243, 100, 243);
+    doc.setFont("helvetica", "bold");
+    doc.setTextColor(11, 31, 58);
+    doc.text("HORLA OLUWA Multipurpose Investment Limited", 14, 250);
+    doc.setFont("helvetica", "normal");
+    doc.setFontSize(9);
+    doc.setTextColor(100, 100, 100);
+    doc.text("Authorized Signatory", 14, 257);
+    doc.setFillColor(11, 31, 58);
+    doc.rect(0, 285, 210, 12, "F");
+    doc.setTextColor(232, 184, 75);
+    doc.setFontSize(8);
+    doc.text("HORLA OLUWA Multipur
